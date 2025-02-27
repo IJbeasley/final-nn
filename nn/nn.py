@@ -245,8 +245,11 @@ class NeuralNetwork:
             nl_transform: ArrayLike
                 Activation function output.
         """
-        pass
-
+        
+        nl_transform = 1 / (1 + np.exp(-Z))
+        
+        return nl_transform
+      
     def _sigmoid_backprop(self, dA: ArrayLike, Z: ArrayLike):
         """
         Sigmoid derivative for backprop.
@@ -275,7 +278,11 @@ class NeuralNetwork:
             nl_transform: ArrayLike
                 Activation function output.
         """
-        pass
+        
+        nl_transform = np.maximum(0, Z)
+        
+        return nl_transform
+
 
     def _relu_backprop(self, dA: ArrayLike, Z: ArrayLike) -> ArrayLike:
         """
@@ -339,7 +346,11 @@ class NeuralNetwork:
             loss: float
                 Average loss of mini-batch.
         """
-        pass
+        
+        mse = np.mean((y - y_hat) ** 2)
+        
+        return mse
+      
 
     def _mean_squared_error_backprop(self, y: ArrayLike, y_hat: ArrayLike) -> ArrayLike:
         """
