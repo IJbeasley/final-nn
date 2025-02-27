@@ -1,5 +1,7 @@
 # Final project: neural network
 
+![BuildStatus](https://github.com/IJbeasley/final-nn/workflows/Assignment%20Tests/badge.svg) 
+
 ## Overview
 
 In this assignment, you will implement a neural network class from (almost) scratch. You will then apply your class to create both:
