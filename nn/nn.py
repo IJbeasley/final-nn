@@ -231,7 +231,10 @@ class NeuralNetwork:
             y_hat: ArrayLike
                 Prediction from the model.
         """
-        pass
+        # prediction is same as one forward pass
+        y_hat, _ = self.forward(X)
+        
+        return y_hat
 
     def _sigmoid(self, Z: ArrayLike) -> ArrayLike:
         """
