@@ -325,7 +325,7 @@ class NeuralNetwork:
 
         # Step 1. Calculate loss
         # calculate binary cross-entropy loss = - (y * log(p) + (1 - y) * log(1 - p))
-        neg_losses = y * np.log(y) + (1 - y) * np.log(1 - y_hat)
+        neg_losses = y * np.log(y_hat) + (1 - y) * np.log(1 - y_hat)
         loss = -1 * np.mean(neg_losses)
 
         return loss
