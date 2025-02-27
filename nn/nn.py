@@ -317,7 +317,18 @@ class NeuralNetwork:
             loss: float
                 Average loss over mini-batch.
         """
-        pass
+        # Step 1. Prepare inputs
+        # Handle potential numerical stability issues
+        # By adding small epsilon to prevent log(0)
+        epsilon = 1e-15
+        y_hat = np.clip(y_hat, epsilon, 1 - epsilon)
+
+        # Step 1. Calculate loss
+        # calculate binary cross-entropy loss = - (y * log(p) + (1 - y) * log(1 - p))
+        neg_losses = y * np.log(y) + (1 - y) * np.log(1 - y_hat)
+        loss = -1 * np.mean(neg_losses)
+
+        return loss
 
     def _binary_cross_entropy_backprop(self, y: ArrayLike, y_hat: ArrayLike) -> ArrayLike:
         """
