@@ -380,4 +380,9 @@ class NeuralNetwork:
             dA: ArrayLike
                 partial derivative of loss with respect to A matrix.
         """
-        pass
+        # calculate mse dervivative, not average here: (y - y_hat) ** 2
+        dA = - 2 * (y - y_hat)
+        # ?? to check: do we divide by n? i.e. 
+        # dA = - 2 * (y - y_hat) / len(y)
+        
+        return dA
