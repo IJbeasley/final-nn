@@ -402,10 +402,16 @@ class NeuralNetwork:
                 partial derivative of loss with respect to A matrix.
         """
         
-        # Take derivative of losses: - y * np.log(y_hat) + (1 - y) * np.log(1 - y_hat)
-        neg_dA_unscaled = y *  1 /(y_hat) + (1-y) * 1 / (1 - y_hat)
-        # Make dervivative correct sign, and scale by batch size
-        dA = - neg_dA_unscaled / len(y)
+        # Step 1. Prepare inputs
+        # Handle potential numerical stability issues
+        # By adding small epsilon to prevent log(0)
+        epsilon = 1e-15
+        y_hat = np.clip(y_hat, epsilon, 1 - epsilon)
+        
+        # Take derivative of losses: - y * (np.log(y_hat) + (1 - y) * np.log(1 - y_hat))
+        dA_unscaled = - (y *  1 /(y_hat) + (1- y) * 1 / (1 - y_hat))
+        # scale dervivative by batch size
+        dA = dA_unscaled / len(y)
         
         return dA
 
