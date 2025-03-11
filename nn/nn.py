@@ -344,7 +344,13 @@ class NeuralNetwork:
             dA: ArrayLike
                 partial derivative of loss with respect to A matrix.
         """
-        pass
+        # take derivative of losses: - y * np.log(y_hat) + (1 - y) * np.log(1 - y_hat)
+        neg_dA = y *  1 /(y_hat) + (1-y) * 1 / (1 - y_hat)
+        # ?? to check: do we divide by n? i.e.  
+        # dA = -neg_A / len(y)
+        dA = - neg_dA
+        
+        return dA
 
     def _mean_squared_error(self, y: ArrayLike, y_hat: ArrayLike) -> float:
         """
