@@ -215,7 +215,7 @@ class NeuralNetwork:
         # Calculate dA_curr - as required argument for _single_backprop 
         if self._loss_func.lower() == "mse":
            dA_curr = self.mean_squared_error_backprop(y, y_hat)
-        elif self.loss_func.lower() == "bce":
+        elif self._loss_func.lower() == "bce":
            dA_curr = self.binary_cross_entropy_backprop(y, y_hat)
         else:
            raise ValueError("Loss function should be one of: mse, bce")
@@ -228,8 +228,8 @@ class NeuralNetwork:
 
             # Get additional required parameter values for _single_backprop step
             activation_curr = layer['activation']
-            W_curr = param_dict['W' + str(layer_idx)]
-            b_curr = param_dict['b' + str(layer_idx)]
+            W_curr = self._param_dict['W' + str(layer_idx)]
+            b_curr = self._param_dict['b' + str(layer_idx)]
             
             Z_curr = cache['Z' + str(layer_idx)]
             A_prev = cache['A' + str(layer_idx - 1)]
@@ -305,7 +305,7 @@ class NeuralNetwork:
         # define error function
         if self._loss_func.lower() == "mse":
            error_fn = self.mean_squared_error()
-        elif self.loss_func.lower() == "bce":
+        elif self._loss_func.lower() == "bce":
            error_fn = self.binary_cross_entropy()
         else:
            raise ValueError("Loss function should be one of: mse, bce")
