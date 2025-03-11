@@ -220,7 +220,18 @@ class NeuralNetwork:
             grad_dict: Dict[str, ArrayLike]
                 Dictionary containing the gradient information from most recent round of backprop.
         """
-        pass
+        
+        # for each node parameters across every layer ... 
+        for idx, layer in enumerate(self.arch):
+          
+            layer_idx = idx + 1
+            
+            # update using gradient descent, i.e.
+            # using formula on slide 12/43 neural network lecture
+            # update by subtracting learning rate * gradient
+            self.param_dict['W' + str(layer_idx)] -= self.lr * grad_dict['W' + str(layer_idx)]
+            self.param_dict['b' + str(layer_idx)] -= self.lr * grad_dict['b' + str(layer_idx)]
+        
 
     def fit(
         self,
