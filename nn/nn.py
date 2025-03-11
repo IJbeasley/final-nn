@@ -330,9 +330,11 @@ class NeuralNetwork:
         """
         # dervivative of sigmoid with respect to Z
         # d/dZ( 1 / (1 + np.exp(-Z)) ) = exp (-Z) / (1 + exp(-Z)) ^ 2
-        # ??? check: equivalent to sigmoid(Z) * (1 - sigmoid(Z))
+        # equiv to: sigmoid(Z) * (1 - sigmoid(Z))
+        # https://medium.com/@pdquant/all-the-backpropagation-derivatives-d5275f727f60 
+        sig_Z = self._sigmoid(Z)
         
-        dZ = dA * np.exp(-Z) / (1 + np.exp(-Z)) ** 2
+        dZ = dA * sig_Z * (1 - sig_Z)
         
         return dZ
         
