@@ -312,13 +312,22 @@ class NeuralNetwork:
         
         for epoch in range(1, self._epochs):
           
-                  # Shuffling the training data for each epoch of training
-                  # Shuffling code taken from HW7-regression/regression/logreg.py
-                  shuffle_arr = np.concatenate([X_train, np.expand_dims(y_train, 1)], axis=1)
-                  np.random.shuffle(shuffle_arr)
-                  X_train = shuffle_arr[:, :-1]
-                  y_train = shuffle_arr[:, -1].flatten()
+            # Shuffling the training data for each epoch of training
+            # Shuffling code taken from HW7-regression/regression/logreg.py
+            shuffle_arr = np.concatenate([X_train, np.expand_dims(y_train, 1)], axis=1)
+            np.random.shuffle(shuffle_arr)
+            X_train = shuffle_arr[:, :-1]
+            y_train = shuffle_arr[:, -1].flatten()
+                  
+            # Create batches (also taken from HW7-regression/regression/logreg.py)
+            num_batches = int(X_train.shape[0] / self._batch_size) + 1
+            X_batch = np.array_split(X_train, num_batches)
+            y_batch = np.array_split(y_train, num_batches)
             
+            per_batch_loss = []
+
+            # Iterate through batches (one of these loops is one epoch of training)
+            for X_train, y_train in zip(X_batch, y_batch):            
             
                    # steps taken from slide 27/43 of neural networks lecture
                    
@@ -327,20 +336,26 @@ class NeuralNetwork:
                    
                    # step 2. measure error
                    error = self.error_fn(y_train, y_pred)
-                  
+                   per_batch_loss.append(error)
+                   
                    # step 3. backward pass
                    grad_dict = self.backprop(y_train, y_pred, cache)
                   
                    # step 4. do standard gradient descent 
                    self._update_params(grad_dict)
-               
-          
+            
+            
+            # Calculate per epoch loss on training set  
+            per_epoch_loss_train.append(np.mean(per_batch_loss))
+            
+            # Calculate per epoch loss on validation set 
+            y_pred_val, _ = self.foward(X_val)
+            per_epoch_loss_val.append(self.error_fn(y_val, y_pred_val))
+            
         
         return per_epoch_loss_train, per_epoch_loss_val
       
         
-        pass
-
     def predict(self, X: ArrayLike) -> ArrayLike:
         """
         This function returns the prediction of the neural network.
