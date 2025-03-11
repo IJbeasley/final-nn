@@ -401,11 +401,11 @@ class NeuralNetwork:
             dA: ArrayLike
                 partial derivative of loss with respect to A matrix.
         """
-        # take derivative of losses: - y * np.log(y_hat) + (1 - y) * np.log(1 - y_hat)
-        neg_dA = y *  1 /(y_hat) + (1-y) * 1 / (1 - y_hat)
-        # ?? to check: do we divide by n? i.e.  
-        # dA = -neg_A / len(y)
-        dA = - neg_dA
+        
+        # Take derivative of losses: - y * np.log(y_hat) + (1 - y) * np.log(1 - y_hat)
+        neg_dA_unscaled = y *  1 /(y_hat) + (1-y) * 1 / (1 - y_hat)
+        # Make dervivative correct sign, and scale by batch size
+        dA = - neg_dA_unscaled / len(y)
         
         return dA
 
@@ -443,9 +443,7 @@ class NeuralNetwork:
             dA: ArrayLike
                 partial derivative of loss with respect to A matrix.
         """
-        # calculate mse dervivative, not average here: (y - y_hat) ** 2
-        dA = - 2 * (y - y_hat)
-        # ?? to check: do we divide by n? i.e. 
-        # dA = - 2 * (y - y_hat) / len(y)
+        # calculate mse dervivative, scaled by batch size: (y - y_hat) ** 2 / n
+        dA = - 2 * (y - y_hat) / len(y)
         
         return dA
