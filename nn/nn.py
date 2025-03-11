@@ -106,7 +106,18 @@ class NeuralNetwork:
             Z_curr: ArrayLike
                 Current layer linear transformed matrix.
         """
-        pass
+        # weight times input + bias
+        Z_curr = np.dot(W_curr, A_prev) + b_curr
+        
+        # then apply transformation with activation function: 
+        if activation.lower() == "sigmoid":
+           A_curr = self._sigmoid(Z_curr)
+        else if activation.lower() == "relu":
+           A_curr = self._relu(Z_curr)
+        else:
+          raise ValueError("Activation function should be one of: sigmoid, relu")
+        
+        return A_curr, Z_curr 
 
     def forward(self, X: ArrayLike) -> Tuple[ArrayLike, Dict[str, ArrayLike]]:
         """
@@ -122,6 +133,8 @@ class NeuralNetwork:
             cache: Dict[str, ArrayLike]:
                 Dictionary storing Z and A matrices from `_single_forward` for use in backprop.
         """
+        
+        return output, cache
         pass
 
     def _single_backprop(
@@ -217,6 +230,18 @@ class NeuralNetwork:
             per_epoch_loss_val: List[float]
                 List of per epoch loss for validation set.
         """
+        
+        for epoch in range(1, self._epochs):
+            
+            # step 1: forward pass
+            y_pred, _ = self.forward(X_train)
+            
+            # step 2. measure error
+          
+        
+        return per_epoch_loss_train, per_epoch_loss_val
+      
+        
         pass
 
     def predict(self, X: ArrayLike) -> ArrayLike:
