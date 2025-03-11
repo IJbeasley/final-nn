@@ -304,13 +304,13 @@ class NeuralNetwork:
         
         # define error function
         if self._loss_func.lower() == "mse":
-           error_fn = mean_squared_error()
+           error_fn = self.mean_squared_error()
         elif self.loss_func.lower() == "bce":
-           error_fn = binary_cross_entropy()
+           error_fn = self.binary_cross_entropy()
         else:
            raise ValueError("Loss function should be one of: mse, bce")
         
-        for epoch in range(1, self._epochs):
+        for epoch in range(self._epochs):
           
             # Shuffling the training data for each epoch of training
             # Shuffling code taken from HW7-regression/regression/logreg.py
@@ -335,7 +335,7 @@ class NeuralNetwork:
                    y_pred, cache = self.forward(X_train)
                    
                    # step 2. measure error
-                   error = self.error_fn(y_train, y_pred)
+                   error = error_fn(y_train, y_pred)
                    per_batch_loss.append(error)
                    
                    # step 3. backward pass
@@ -349,7 +349,7 @@ class NeuralNetwork:
             per_epoch_loss_train.append(np.mean(per_batch_loss))
             
             # Calculate per epoch loss on validation set 
-            y_pred_val, _ = self.foward(X_val)
+            y_pred_val = self.predict(X_val)
             per_epoch_loss_val.append(self.error_fn(y_val, y_pred_val))
             
         
