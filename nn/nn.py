@@ -212,6 +212,14 @@ class NeuralNetwork:
         # Initialize variables
         grad_dict = {}
         
+        # Calculate dA_curr - as required argument for _single_backprop 
+        if self._loss_func.lower() == "mse":
+           dA_curr = self.mean_squared_error_backprop(y, y_hat)
+        elif self.loss_func.lower() == "bce":
+           dA_curr = self.binary_cross_entropy_backprop(y, y_hat)
+        else:
+           raise ValueError("Loss function should be one of: mse, bce")
+        
         # Traverse backwards across every layer ... 
         for idx in range(len(self.arch) - 1, -1, -1):
             
