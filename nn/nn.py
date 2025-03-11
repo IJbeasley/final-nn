@@ -267,7 +267,14 @@ class NeuralNetwork:
             dZ: ArrayLike
                 Partial derivative of current layer Z matrix.
         """
-        pass
+        # dervivative of sigmoid with respect to Z
+        # d/dZ( 1 / (1 + np.exp(-Z)) ) = exp (-Z) / (1 + exp(-Z)) ^ 2
+        # ??? check: equivalent to sigmoid(Z) * (1 - sigmoid(Z))
+        
+        dZ = dA * np.exp(-Z) / (1 + np.exp(-Z)) ** 2
+        
+        return dZ
+        
 
     def _relu(self, Z: ArrayLike) -> ArrayLike:
         """
@@ -301,7 +308,15 @@ class NeuralNetwork:
             dZ: ArrayLike
                 Partial derivative of current layer Z matrix.
         """
-        pass
+        # reLu gradient is either 0, or 1
+        if Z>0:
+           # reLu gradient is 1, so dZ = 1 * dA
+           dZ = dA
+        else: 
+          # reLu gradient is 0, so dZ = 9 * dA
+           dZ = 0
+        
+        return dZ
 
     def _binary_cross_entropy(self, y: ArrayLike, y_hat: ArrayLike) -> float:
         """
