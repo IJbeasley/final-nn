@@ -302,7 +302,7 @@ class NeuralNetwork:
         per_epoch_loss_train = []
         per_epoch_loss_val = []
         
-        # error function
+        # define error function
         if self._loss_func.lower() == "mse":
            error_fn = mean_squared_error()
         elif self.loss_func.lower() == "bce":
@@ -311,6 +311,13 @@ class NeuralNetwork:
            raise ValueError("Loss function should be one of: mse, bce")
         
         for epoch in range(1, self._epochs):
+          
+                  # Shuffling the training data for each epoch of training
+                  # Shuffling code taken from HW7-regression/regression/logreg.py
+                  shuffle_arr = np.concatenate([X_train, np.expand_dims(y_train, 1)], axis=1)
+                  np.random.shuffle(shuffle_arr)
+                  X_train = shuffle_arr[:, :-1]
+                  y_train = shuffle_arr[:, -1].flatten()
             
             
                    # steps taken from slide 27/43 of neural networks lecture
