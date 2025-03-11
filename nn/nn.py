@@ -190,7 +190,7 @@ class NeuralNetwork:
         # current layer bias matrix: from formula slide 29/43 in neural networks lecture
         db_curr = np.sum(dZ)
         
-        return dA_prev, dW_curr, db_curr
+        return (dA_prev, dW_curr, db_curr)
         
     def backprop(self, y: ArrayLike, y_hat: ArrayLike, cache: Dict[str, ArrayLike]):
         """
@@ -209,7 +209,37 @@ class NeuralNetwork:
             grad_dict: Dict[str, ArrayLike]
                 Dictionary containing the gradient information from this pass of backprop.
         """
-        pass
+        # Initialize variables
+        grad_dict = {}
+        
+        # TO DO: Traverse backwards
+        # for each node parameters across every layer ... 
+        for idx, layer in enumerate(self.arch):
+            
+            layer_idx = idx + 1 
+
+            # Get additional required parameter values for _single_backprop step
+            activation_curr = layer['activation']
+            W_curr = param_dict['W' + str(layer_idx)]
+            b_curr = param_dict['b' + str(layer_idx)]
+            
+            Z_curr = cache['Z' + str(layer_idx)]
+            A_prev = cache['A' + str(layer_idx - 1)]
+            
+            # Perform single backprop step            
+            dA_prev, dW_curr, db_curr = self._single_backprop(W_curr,
+                                                              b_curr,
+                                                              Z_curr,
+                                                              A_prev,
+                                                              dA_curr,
+                                                              activation_curr)
+                                                              
+            
+            # Update grad_dict                                                   
+            grad_dict['W' + str(layer_idx)] =  dW_curr
+            grad_dict['b' + str(layer_idx)] =  db_curr
+            
+        return grad_dict
 
     def _update_params(self, grad_dict: Dict[str, ArrayLike]):
         """
@@ -274,12 +304,12 @@ class NeuralNetwork:
         
         for epoch in range(1, self._epochs):
             
-            # step 1: forward pass
-            y_pred, _ = self.forward(X_train)
             
-            # step 2. measure error
-            error = self.error_fn(y_true, y_pred)
+                   # step 1: forward pass
+       y_pred, cache = self.forward(X_train)
             
+       # step 2. measure error
+       error = self.error_fn(y_true, y_pred)
             # step 3. backward pass
             
             # step 4. do standard gradient descent 
