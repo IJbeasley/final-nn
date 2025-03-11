@@ -106,7 +106,7 @@ class NeuralNetwork:
             Z_curr: ArrayLike
                 Current layer linear transformed matrix.
         """
-        # weight times input + bias
+        # Linear transformed matrix = weight times input + bias
         Z_curr = np.dot(W_curr, A_prev) + b_curr
         
         # then apply transformation with activation function: 
@@ -119,7 +119,7 @@ class NeuralNetwork:
         else:
           raise ValueError("Activation function should be one of: sigmoid, relu")
         
-        return A_curr, Z_curr 
+        return (A_curr, Z_curr)
 
     def forward(self, X: ArrayLike) -> Tuple[ArrayLike, Dict[str, ArrayLike]]:
         """
@@ -169,7 +169,7 @@ class NeuralNetwork:
         
         output = A_prev
         
-        return output, cache
+        return (output, cache)
 
     def _single_backprop(
         self,
@@ -224,7 +224,7 @@ class NeuralNetwork:
         
         return (dA_prev, dW_curr, db_curr)
         
-    def backprop(self, y: ArrayLike, y_hat: ArrayLike, cache: Dict[str, ArrayLike]):
+    def backprop(self, y: ArrayLike, y_hat: ArrayLike, cache: Dict[str, ArrayLike]) -> Dict[str, ArrayLike]:
         """
         This method is responsible for the backprop of the whole fully connected neural network.
 
@@ -385,7 +385,7 @@ class NeuralNetwork:
             per_epoch_loss_val.append(self.error_fn(y_val, y_pred_val))
             
         
-        return per_epoch_loss_train, per_epoch_loss_val
+        return (per_epoch_loss_train, per_epoch_loss_val)
       
         
     def predict(self, X: ArrayLike) -> ArrayLike:
@@ -422,7 +422,7 @@ class NeuralNetwork:
         
         return nl_transform
       
-    def _sigmoid_backprop(self, dA: ArrayLike, Z: ArrayLike):
+    def _sigmoid_backprop(self, dA: ArrayLike, Z: ArrayLike) -> ArrayLike:
         """
         Sigmoid derivative for backprop.
 
