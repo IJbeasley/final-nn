@@ -313,14 +313,19 @@ class NeuralNetwork:
         for epoch in range(1, self._epochs):
             
             
+                   # steps taken from slide 27/43 of neural networks lecture
+                   
                    # step 1: forward pass
-       y_pred, cache = self.forward(X_train)
-            
-       # step 2. measure error
-       error = self.error_fn(y_true, y_pred)
-            # step 3. backward pass
-            
-            # step 4. do standard gradient descent 
+                   y_pred, cache = self.forward(X_train)
+                   
+                   # step 2. measure error
+                   error = self.error_fn(y_train, y_pred)
+                  
+                   # step 3. backward pass
+                   grad_dict = self.backprop(y_train, y_pred, cache)
+                  
+                   # step 4. do standard gradient descent 
+                   self._update_params(grad_dict)
                
           
         
