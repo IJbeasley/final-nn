@@ -112,8 +112,10 @@ class NeuralNetwork:
         # then apply transformation with activation function: 
         if activation.lower() == "sigmoid":
            A_curr = self._sigmoid(Z_curr)
-        else if activation.lower() == "relu":
+           
+        elif activation.lower() == "relu":
            A_curr = self._relu(Z_curr)
+           
         else:
           raise ValueError("Activation function should be one of: sigmoid, relu")
         
@@ -172,27 +174,24 @@ class NeuralNetwork:
                 Partial derivative of loss function with respect to current layer bias matrix.
         """
         
-        # 
-        
+        # Derivative of activation function
         if activation.lower() == "sigmoid":
            dZ = self._sigmoid_backprop(dA_curr, dZ_curr)
-        else if activation.lower() == "relu":
+        elif activation.lower() == "relu":
            dZ = self._relu_backprop(dA_curr, dZ_curr)
         else:
           raise ValueError("Activation function should be one of: sigmoid, relu")
         
         # Then, partial derivative of loss function, with respect to:
         # previous layer activation matrix
-        dA_prev = np.dot(dZ, A_prev)
-        # current layer weight matrix
-        dW_curr = np.dot(dZ, W_curr)
-        # current layer bias matrix
-        db_curr = np.dot(dZ, b_curr)
+        dA_prev = np.dot(dZ, W_curr)
+        # current layer weight matrix: from fomula slide 29/43 in neural networks lecture
+        dW_curr = np.dot(dZ, A_prev)
+        # current layer bias matrix: from formula slide 29/43 in neural networks lecture
+        db_curr = np.sum(dZ)
         
         return dA_prev, dW_curr, db_curr
         
-        pass
-
     def backprop(self, y: ArrayLike, y_hat: ArrayLike, cache: Dict[str, ArrayLike]):
         """
         This method is responsible for the backprop of the whole fully connected neural network.
@@ -257,7 +256,7 @@ class NeuralNetwork:
         # error function
         if self._loss_func.lower() == "mse":
            error_fn = mean_squared_error()
-        else if self.loss_func.lower() == "bce":
+        elif self.loss_func.lower() == "bce":
            error_fn = binary_cross_entropy()
         else:
            raise ValueError("Loss function should be one of: mse, bce")
