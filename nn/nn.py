@@ -230,6 +230,17 @@ class NeuralNetwork:
             per_epoch_loss_val: List[float]
                 List of per epoch loss for validation set.
         """
+        # initialise variables
+        per_epoch_loss_train = []
+        per_epoch_loss_val = []
+        
+        # error function
+        if self._loss_func.lower() == "mse":
+           error_fn = mean_squared_error()
+        else if self.loss_func.lower() == "bce":
+           error_fn = binary_cross_entropy()
+        else:
+           raise ValueError("Loss function should be one of: mse, bce")
         
         for epoch in range(1, self._epochs):
             
@@ -237,6 +248,12 @@ class NeuralNetwork:
             y_pred, _ = self.forward(X_train)
             
             # step 2. measure error
+            error = self.error_fn(y_true, y_pred)
+            
+            # step 3. backward pass
+            
+            # step 4. do standard gradient descent 
+               
           
         
         return per_epoch_loss_train, per_epoch_loss_val
