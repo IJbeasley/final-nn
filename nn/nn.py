@@ -175,10 +175,10 @@ class NeuralNetwork:
         """
         
         # Derivative of activation function
-        if activation.lower() == "sigmoid":
-           dZ = self._sigmoid_backprop(dA_curr, dZ_curr)
-        elif activation.lower() == "relu":
-           dZ = self._relu_backprop(dA_curr, dZ_curr)
+        if activation_curr.lower() == "sigmoid":
+           dZ = self._sigmoid_backprop(dA_curr, Z_curr)
+        elif activation_curr.lower() == "relu":
+           dZ = self._relu_backprop(dA_curr, Z_curr)
         else:
           raise ValueError("Activation function should be one of: sigmoid, relu")
         
