@@ -212,10 +212,10 @@ class NeuralNetwork:
         # Initialize variables
         grad_dict = {}
         
-        # TO DO: Traverse backwards
-        # for each node parameters across every layer ... 
-        for idx, layer in enumerate(self.arch):
+        # Traverse backwards across every layer ... 
+        for idx in range(len(self.arch) - 1, -1, -1):
             
+            layer = self.arch[idx]
             layer_idx = idx + 1 
 
             # Get additional required parameter values for _single_backprop step
