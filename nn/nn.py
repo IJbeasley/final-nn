@@ -171,6 +171,26 @@ class NeuralNetwork:
             db_curr: ArrayLike
                 Partial derivative of loss function with respect to current layer bias matrix.
         """
+        
+        # 
+        
+        if activation.lower() == "sigmoid":
+           dZ = self._sigmoid_backprop(dA_curr, dZ_curr)
+        else if activation.lower() == "relu":
+           dZ = self._relu_backprop(dA_curr, dZ_curr)
+        else:
+          raise ValueError("Activation function should be one of: sigmoid, relu")
+        
+        # Then, partial derivative of loss function, with respect to:
+        # previous layer activation matrix
+        dA_prev = np.dot(dZ, A_prev)
+        # current layer weight matrix
+        dW_curr = np.dot(dZ, W_curr)
+        # current layer bias matrix
+        db_curr = np.dot(dZ, b_curr)
+        
+        return dA_prev, dW_curr, db_curr
+        
         pass
 
     def backprop(self, y: ArrayLike, y_hat: ArrayLike, cache: Dict[str, ArrayLike]):
@@ -351,12 +371,14 @@ class NeuralNetwork:
                 Partial derivative of current layer Z matrix.
         """
         # reLu gradient is either 0, or 1
-        if Z>0:
-           # reLu gradient is 1, so dZ = 1 * dA
-           dZ = dA
-        else: 
-          # reLu gradient is 0, so dZ = 9 * dA
-           dZ = 0
+        # if Z>0:
+        #    # reLu gradient is 1, so dZ = 1 * dA
+        #    dZ = dA
+        # else: 
+        #   # reLu gradient is 0, so dZ = 9 * dA
+        #    dZ = 0
+        #    
+        dZ = np.where(Z > 0, dA, 0)
         
         return dZ
 
