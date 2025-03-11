@@ -20,7 +20,24 @@ def sample_seqs(seqs: List[str], labels: List[bool]) -> Tuple[List[str], List[bo
         sampled_labels: List[bool]
             List of labels for the sampled sequences
     """
-    pass
+    np.random.seed(42)
+
+    # Separate sequence list by class
+    pos_seqs = [seq for seq, label in zip(seqs, labels) if label]
+    neg_seqs = [seq for seq, label in zip(seqs, labels) if not label]
+    
+    # Find the number of samples needed for balancing 
+    max_samples = max(len(pos_seqs), len(neg_seqs))
+    
+    # Sample with replacement to balance classes
+    sampled_pos = np.random.choice(pos_seqs, max_samples, replace=True).tolist()
+    sampled_neg = np.random.choice(neg_seqs, max_samples, replace=True).tolist()
+    
+    # Combine sampled sequences and labels
+    sampled_seqs = sampled_pos + sampled_neg
+    sampled_labels = [True] * max_samples + [False] * max_samples
+    
+    return list(sampled_seqs), list(sampled_labels)
 
 def one_hot_encode_seqs(seq_arr: List[str]) -> ArrayLike:
     """
@@ -53,5 +70,4 @@ def one_hot_encode_seqs(seq_arr: List[str]) -> ArrayLike:
     encoded_seqs = [np.concatenate([encoding_map[base] for base in seq]) for seq in seq_arr]
     
     return np.array(encoded_seqs)
-    
-    pass
+
