@@ -67,7 +67,12 @@ def one_hot_encode_seqs(seq_arr: List[str]) -> ArrayLike:
     }
     
     # Use this map to encode sequences
+    # This creates an 2D array of encoded sequences, each row is a single nucleotide in the sequence
     encoded_seqs = [np.concatenate([encoding_map[base] for base in seq]) for seq in seq_arr]
+
+    # Convert 2D array to 1D array
+    encoded_seqs = np.array(encoded_seqs)
+    encoded_seqs = encoded_seqs.flatten()
     
-    return np.array(encoded_seqs)
+    return encoded_seqs
 
