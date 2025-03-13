@@ -36,8 +36,7 @@ def test_mean_squared_error():
                             seed = 42, 
                             batch_size = 5, 
                             epochs = 1, 
-                            loss_function='mse', 
-                            verbose=False
+                            loss_function='mse'
                                                     )
 
     y_true = np.array([1, 0, 1, 0])
