@@ -85,8 +85,6 @@ def test_one_hot_encode_seqs():
     """
     encoded_seqs = one_hot_encode_seqs(['AGA']) 
    
-    print(encoded_seqs)
-    print(len(encoded_seqs[0]))
-    assert len(encoded_seqs) == 3 * 4, "One-hot encoding is incorrect"
+    assert len(encoded_seqs[0]) == 12, "One-hot encoding is incorrect"
 
     assert np.allequal(encoded_seqs, [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]), "One-hot encoding is incorrect"
