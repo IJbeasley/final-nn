@@ -56,10 +56,12 @@ def test_sample_seqs():
     """
 
     seqs = ['AGA', 'TGC', 'CTA', 'GAT']
-    labels = [True, False, True, False]
+    labels = [True, True, True, False]
 
+    sampled_seqs, sampled_labels = sample_seqs(seqs, labels)
 
-    pass
+    assert len(sampled_seqs) == 6, "Sampled sequences are incorrect"
+
 
 def test_one_hot_encode_seqs():
     """
