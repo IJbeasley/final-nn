@@ -83,7 +83,7 @@ def test_one_hot_encode_seqs():
     Ensure that the one_hot_encode_seqs function correctly one-hot-encodes sequences. 
     Checks that one-hot-encoded sequence is correct length, and correct encoding.
     """
-    encoded_seqs = one_hot_encode_seqs('AGA') 
+    encoded_seqs = one_hot_encode_seqs(['AGA']) 
    
     print(encoded_seqs)
     print(len(encoded_seqs[0]))

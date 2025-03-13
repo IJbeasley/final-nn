@@ -39,10 +39,6 @@ def sample_seqs(seqs: List[str], labels: List[bool]) -> Tuple[List[str], List[bo
     
     return list(sampled_seqs), list(sampled_labels)
 
-
-# Define the allowed nucleotide bases
-ALLOWED_NUC = ['A', 'T', 'C', 'G']
-
 def one_hot_encode_seqs(seq_arr: List[str]) -> ArrayLike:
     """
     This function generates a flattened one-hot encoding of a list of DNA sequences
@@ -74,11 +70,12 @@ def one_hot_encode_seqs(seq_arr: List[str]) -> ArrayLike:
 
     one_hot_encoding = []
 
-    # Check for invalid nucleotides
+    
     for seq_id in range(len(seq_arr)):
 
         seq = seq_arr[seq_id]
-
+       
+       # Check for invalid nucleotides
         if any(base not in ALLOWED_NUC for base in seq):
             raise ValueError(f"Invalid nucleotide found in sequence '{seq}'. Allowed nucleotides: {ALLOWED_NUC}")
         
