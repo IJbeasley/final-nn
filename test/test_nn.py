@@ -87,4 +87,4 @@ def test_one_hot_encode_seqs():
    
     assert len(encoded_seqs[0]) == 12, "One-hot encoding is incorrect"
 
-    assert np.allequal(encoded_seqs, [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]), "One-hot encoding is incorrect"
+    assert np.array_equal(encoded_seqs, [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]), "One-hot encoding is incorrect"
