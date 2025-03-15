@@ -31,7 +31,8 @@ nn_mse_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 4, 'output_dim': 2, 'a
                                                            )
 
 # Create own weights and biases for the neural network
-nn_bce_eg_model._param_dict = {"W1": np.array([[0.5, 1, 5], [5, 0.5, 1]]),
+nn_bce_eg_model._param_dict = {"W1": np.array([[0.5, 1, 5, 1],
+                                                                               [1, 0.5, 1, 1]]),
                                                       "b1": np.array([[1], [1]]),
                                                       "W2": np.array([[2, 1]]),
                                                       "b2": np.array([[1]])
@@ -81,7 +82,9 @@ def test_forward():
     Check that a forward pass of the neural network is correct.
     """
     # Calculate forward
-    output, cache = nn_bce_eg_model.forward(np.array([2, 2, 2]))
+    output, cache = nn_bce_eg_model.forward(np.array([2, 1, 1, 2]))
+
+
 
     pass
 
@@ -90,7 +93,9 @@ def test_forward():
 
 def test_single_backprop():
     """
-    Check that a single backpropagation of the neural network is correct.
+    Check that a single backpropagation of the neural network is correct: 
+    - check fails correctly when invalid activation function is used.
+    - compare the calculated dA_prev, dW_curr, and db_curr values to the expected values, when using the relu activation function
     """
 
     pass
@@ -100,12 +105,23 @@ def test_single_backprop():
 
 def test_predict():
     """
-    Ensure that the calculated prediction of the neural network is correct.
+    Ensure that the calculated prediction of the neural network is correct: 
+    - (?TO DO): check won't predict if the model has not been trained
+    - check that the prediction is the correct length
+    - check that the prediction is the correct value
+    - check that the prediction matches the output of the forward pass
     """
     
-    pred = nn_bce_eg_model.predict(np.array([2, 2, 2,]))
+    pred = nn_bce_eg_model.predict(np.array([2, 1, 1, 2]))
 
-    pass
+    assert len(pred) == 1, "Prediction was incorrect, output dimension should have been a single value"
+
+    print(pred)
+
+    assert np.allclose(pred, 0.9990889488055994, rtol = 1e-4), "Prediction was incorrect, the predicted value does not match the expected value"
+
+    assert np.allclose(pred, nn_bce_eg_model.forward(np.array([2, 1, 1, 2]))[0], rtol = 1e-4), "Prediction was incorrect, the predicted value does not match the forward pass output"
+
 
 
 
