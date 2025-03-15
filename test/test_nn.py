@@ -75,8 +75,38 @@ def test_binary_cross_entropy():
 def test_binary_cross_entropy_backprop():
     """
     Ensure that the binary_cross_entropy_backprop function correctly calculates the binary cross entropy backpropagation. 
+
+   The example tested:
+    y = np.array([1, 0, 1, 0])
+    y_hat = np.array([0.9, 0.1, 0.8, 0.2])
+
+
     """
-    pass
+   # initialize the neural network model so that we can use the binary_cross_entropy function
+    nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
+                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
+                                                        lr = 0.5, 
+                                                       seed = 42, 
+                                                       batch_size = 5, 
+                                                       epochs = 1, 
+                                                      loss_function='bce'
+                                                      )
+   # Make an example of true and predicted y values to test the binary cross entropy backpropagation
+    y = np.array([1, 0, 1, 0])
+    y_hat = np.array([0.9, 0.1, 0.8, 0.2])
+   
+   # Calculate the binary cross entropy backpropagation
+    bce_backprop = nn_eg_model._binary_cross_entropy_backprop(y = y, yhat = y_hat)
+
+    # True binary cross entropy values, calculated by hand
+    true_bce_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
+
+    # Check that binary cross entropy backpropagation output is the correct length
+    assert len(bce_backprop) == len(y), "Mean squared error backpropagation was incorrectly performed, the length of the backpropagation should be the same as the length of the true values"
+
+    # Check that the binary cross entropy backpropagation match the expected values calculated by hand
+    assert np.allclose(bce_backprop, true_bce_backprop, rtol = 1e-4), "Mean squared error backpropagation was incorrect, the backpropagation values do not match expected values"
+
 
 def test_mean_squared_error():
     """
@@ -133,20 +163,20 @@ def test_mean_squared_error_backprop():
                                                         epochs = 1, 
                                                         loss_function='mse'
                                                         )
-   # Make an sample example of true and predicted y values to test the mean_squared_error backpropagation
+   # Make an example of true and predicted y values to test the mean_squared_error backpropagation
     y = np.array([1, 0, 1, 0])
     y_hat = np.array([0.9, 0.1, 0.8, 0.2])
 
     # Calculate the mean squared error backpropagation
-    mse_backprop = nn_eg_model._mean_squared_error_backprop(y = y_true, yhat = y_pred)
+    mse_backprop = nn_eg_model._mean_squared_error_backprop(y = y, yhat = y_hat)
 
     # True mean squared error backpropagation values, calculated by hand
-    true_mse_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
+    true_mse_backprop = np.array([-0.05,  0.05, -0.10,  0.10])
    
-    # Check that the mean squared error backpropagationoutput  is the correct length
-    assert len(mse_backprop) == len(y_true), "Mean squared error backpropagation was incorrectly performed, the length of the backpropagation should be the same as the length of the true values"
+    # Check that the mean squared error backpropagation output is the correct length
+    assert len(mse_backprop) == len(y), "Mean squared error backpropagation was incorrectly performed, the length of the backpropagation should be the same as the length of the true values"
    
-    # Check that the mean squared error backpropagation is correct
+    # Check that the mean squared error backpropagation match the expected values calculated by hand
     assert np.allclose(mse_backprop, true_mse_backprop, rtol = 1e-4), "Mean squared error backpropagation was incorrect, the backpropagation values do not match expected values"
 
 
