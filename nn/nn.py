@@ -114,14 +114,15 @@ class NeuralNetwork:
         print(W_curr.shape, A_prev.shape, b_curr.shape)
 
 
-        if W_curr.shape[1] != A_prev.shape[0]: 
-            raise ValueError("Matrix dimensions do not match: W_curr = A_prev")
+        #if W_curr.shape[1] != A_prev.shape[0]: 
+        #    raise ValueError("Matrix dimensions do not match: W_curr = A_prev")
         
-        if W_curr.shape[0] != b_curr.shape[0]:
-            raise ValueError("Matrix dimensions do not match: W_curr = b_curr")
+       # if W_curr.shape[0] != b_curr.shape[0]:
+       #     raise ValueError("Matrix dimensions do not match: W_curr = b_curr")
 
         # Linear transformed matrix = weight times input + bias
-        Z_curr = np.dot(W_curr, A_prev) + b_curr
+        #Z_curr = np.dot(W_curr, A_prev) + b_curr
+        Z_curr=np.dot(A_prev, W_curr.T) + b_curr.T
         
         # then apply transformation with activation function: 
         if activation.lower() == "sigmoid":
@@ -234,7 +235,7 @@ class NeuralNetwork:
         # current layer weight matrix: from fomula slide 29/43 in neural networks lecture
         dW_curr = np.dot(dZ, A_prev)
         # current layer bias matrix: from formula slide 29/43 in neural networks lecture
-        db_curr = np.sum(dZ)
+        db_curr=np.sum(dZ, axis=0).reshape(b_curr.shape)
         
         return (dA_prev, dW_curr, db_curr)
         
@@ -313,8 +314,8 @@ class NeuralNetwork:
             # update using gradient descent, i.e.
             # using formula on slide 12/43 neural network lecture
             # update by subtracting learning rate * gradient
-            self._param_dict['W' + str(layer_idx)] -= self.lr * grad_dict['W' + str(layer_idx)]
-            self._param_dict['b' + str(layer_idx)] -= self.lr * grad_dict['b' + str(layer_idx)]
+            self._param_dict['W' + str(layer_idx)] -= self._lr * grad_dict['W' + str(layer_idx)]
+            self._param_dict['b' + str(layer_idx)] -= self._lr * grad_dict['b' + str(layer_idx)]
         
 
     def fit(
@@ -396,9 +397,14 @@ class NeuralNetwork:
             
             # Calculate per epoch loss on validation set 
             y_pred_val = self.predict(X_val)
-            per_epoch_loss_val.append(self.error_fn(y_val, y_pred_val))
+
+            if self._loss_func.lower() == "mse":
+                      val_error = self._mean_squared_error(y_val, y_pred_val)
+            elif self._loss_func.lower() == "bce":
+                       val_error = self._binary_cross_entropy(y_val, y_pred_val)
+
+            per_epoch_loss_val.append(val_error)
             
-        
         return (per_epoch_loss_train, per_epoch_loss_val)
       
         
