@@ -146,28 +146,24 @@ def test_single_backprop():
 
     # set expected output - calculated by hand
     # to check the correctness of the backpropagation 
-    true_dA_prev = np.array([[
-        0.5, 0.5, 0.5, 0.5],
-        [ 1.5, 1.5, 1.5, 1.5],
-        [ 0.5, 0.5, 0.5, 0.5]
-    ])
+    true_dA_prev = np.array([
+                               [3, 1.5, 1,  2],
+                               [1,  0.5, 0.5, 1],
+                               [3,  1.5, 1, 2]
+                               ])
 
     true_dW_curr = np.array([
-        [ 1.5, 1.5, 1.5, 1.5],
-        [ 1.5, 1.5, 1.5, 1.5]
-    ])
+                            [2/3, 5/3, 2/3, 0],
+                            [1, 5/3, 1, 1/3]
+                            ])
 
     true_db_curr = np.array([
-        [ 3],  
+        [ 2],  
         [ 3]
     ])
 
 
     # Check that the single backpropagation output matches the expected values
-    print(dA_prev)
-    print(dW_curr)
-    print(db_curr)
-
     assert np.allclose(dA_prev, true_dA_prev, rtol = 1e-4), "Single backpropagation was incorrect, the calculated dA_prev values do not match the expected values"
     assert np.allclose(dW_curr, true_dW_curr, rtol = 1e-4), "Single backpropagation was incorrect, the calculated dW_curr values do not match the expected values"  
     assert np.allclose(db_curr, true_db_curr, rtol = 1e-4), "Single backpropagation was incorrect, the calculated db_curr values do not match the expected values"
