@@ -11,15 +11,24 @@ from sklearn.metrics import log_loss # bce
 from sklearn.metrics import mean_squared_error # mse
 
 def test_single_forward():
+    """
+    Check that a single forward pass of the neural network is correct.
+    """
+
     pass
 
 def test_forward():
+    """
+    Check that a forward pass of the neural network is correct.
+    """
+
     pass
 
 def test_single_backprop():
     """
     Check that a single backpropagation of the neural network is correct.
     """
+    
     pass
 
 def test_predict():
@@ -56,12 +65,11 @@ def test_binary_cross_entropy():
     # Calculate loss using scikit learn's log_loss function
     sklearn_loss = log_loss(y_true, y_pred)
 
-    print(f"Sklearn loss: {sklearn_loss}")
+    # Calculate the binary cross entropy using nn module _binary_cross_entropy function
+    nn_loss = nn_eg_model._binary_cross_entropy(y_true, y_pred)
 
-    bce = nn_eg_model._binary_cross_entropy(y_true, y_pred)
-
-    assert np.isclose(bce, 0.164252033486018), "Binary cross entropy loss calculation was incorrect"
-    assert np.isclose(bce, sklearn_loss), "Binary cross entropy loss calculation was incorrect"
+    # Compare binary cross entropy loss to sklean's calculation
+    assert np.isclose(nn_loss, sklearn_loss), "Binary cross entropy loss calculation was incorrect, does not match sklearn's log_loss function"
     
 
 def test_binary_cross_entropy_backprop():
@@ -93,19 +101,40 @@ def test_mean_squared_error():
    # Make an sample example of true and predicted y values to test the mean_squared_error function
     y_true = np.array([1, 0, 1, 0])
     y_pred = np.array([0.9, 0.1, 0.8, 0.2])
+
    # Calculate loss using scikit learn's log_loss function
     sklearn_loss = mean_squared_error(y_true, y_pred)
 
-    # calculate the mean squared error, compare to the value calculated by hand
-    mse = nn_eg_model._mean_squared_error(y_true, y_pred)
-
-    assert np.isclose(mse, sklearn_loss), "Mean squared error loss calculation was incorrect"
+    # Calculate the mean squared error using nn module _mean_squared_error function
+    nn_loss = nn_eg_model._mean_squared_error(y_true, y_pred)
+    
+    # Compare mean squared error loss to sklean's calculation
+    assert np.isclose(nn_loss, sklearn_loss), "Mean squared error loss calculation was incorrect"
 
 def test_mean_squared_error_backprop():
     """
     Ensure that the mean_squared_error_backprop function correctly calculates the mean squared error backpropagation
     """
-    pass
+
+   # initialize the neural network model 
+    nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
+                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
+                                                        lr = 0.5, 
+                                                        seed = 42, 
+                                                        batch_size = 5, 
+                                                        epochs = 1, 
+                                                        loss_function='mse'
+                                                        )
+   # Make an sample example of true and predicted y values to test the mean_squared_error backpropagation
+    y_true = np.array([1, 0, 1, 0])
+    y_pred = np.array([0.9, 0.1, 0.8, 0.2])
+
+    # Calculate the mean squared error backpropagation
+    mse_backprop = nn_eg_model._mean_squared_error_backprop(y_true, y_pred)
+
+    # Check that the mean squared error backpropagation is correct
+    assert np.allclose(mse_backprop, np.array([-0.1, 0.1, -0.2, 0.2])), "Mean squared error backpropagation was incorrect"
+
 
 
 def test_sample_seqs():
