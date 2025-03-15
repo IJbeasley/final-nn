@@ -120,10 +120,15 @@ def test_sample_seqs():
 def test_one_hot_encode_seqs():
     """
     Ensure that the one_hot_encode_seqs function correctly one-hot-encodes sequences. 
-    Checks that one-hot-encoded sequence is correct length, and correct encoding.
+    Checks that one-hot-encoded sequence is correct length, and encoding matches expected output.
+
+    The example tested:
+    AGA -> [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
     """
     encoded_seqs = one_hot_encode_seqs(['AGA']) 
    
     assert len(encoded_seqs[0]) == 12, "One-hot encoding is incorrect"
+
+    print(encoded_seqs)
 
     assert np.array_equal(encoded_seqs, [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]), "One-hot encoding is incorrect"
