@@ -10,6 +10,26 @@ from nn.preprocess import one_hot_encode_seqs,  sample_seqs
 from sklearn.metrics import log_loss # bce
 from sklearn.metrics import mean_squared_error # mse
 
+# Initialize a neural network model to use across tests (with loss function set to binary cross entropy)
+nn_bce_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
+                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
+                                                    lr = 0.5, 
+                                                    seed = 42, 
+                                                    batch_size = 5, 
+                                                    epochs = 1, 
+                                                    loss_function='bce'
+                                                    )
+
+# Initialize a neural network model to use across tests (with loss function set to mean squared error entropy)
+nn_mse_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
+                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
+                                                        lr = 0.5, 
+                                                        seed = 42, 
+                                                        batch_size = 5, 
+                                                        epochs = 1, 
+                                                        loss_function='mse'
+                                                        )
+
 def test_single_forward():
     """
     Check that a single forward pass of the neural network is correct.
@@ -24,6 +44,9 @@ def test_forward():
 
     pass
 
+
+
+
 def test_single_backprop():
     """
     Check that a single backpropagation of the neural network is correct.
@@ -31,11 +54,17 @@ def test_single_backprop():
 
     pass
 
+
+
+
 def test_predict():
     """
     Ensure that the calculated prediction of the neural network is correct.
     """
     pass
+
+
+
 
 def test_binary_cross_entropy():
     """
@@ -48,16 +77,7 @@ def test_binary_cross_entropy():
     binary cross entropy = 0.164252
 
     """
-    # initialize the neural network model so that we can use the binary_cross_entropy function
-    nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
-                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
-                                                        lr = 0.5, 
-                                                       seed = 42, 
-                                                       batch_size = 5, 
-                                                       epochs = 1, 
-                                                      loss_function='bce'
-                                                      )
-    
+
     # Make an sample example of true and predicted y values to test the binary_cross_entropy function
     y_true = np.array([1, 0, 1, 0])
     y_pred = np.array([0.9, 0.1, 0.8, 0.2])
@@ -66,11 +86,13 @@ def test_binary_cross_entropy():
     sklearn_loss = log_loss(y_true, y_pred)
 
     # Calculate the binary cross entropy using nn module _binary_cross_entropy function
-    nn_loss = nn_eg_model._binary_cross_entropy(y_true, y_pred)
+    nn_loss = nn_bce_eg_model._binary_cross_entropy(y_true, y_pred)
 
     # Compare binary cross entropy loss to sklean's calculation
     assert np.isclose(nn_loss, sklearn_loss), "Binary cross entropy loss calculation was incorrect, does not match sklearn's log_loss function"
     
+
+
 
 def test_binary_cross_entropy_backprop():
     """
@@ -83,21 +105,13 @@ def test_binary_cross_entropy_backprop():
     true_bce_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
 
     """
-   # initialize the neural network model so that we can use the binary_cross_entropy function
-    nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
-                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
-                                                        lr = 0.5, 
-                                                       seed = 42, 
-                                                       batch_size = 5, 
-                                                       epochs = 1, 
-                                                      loss_function='bce'
-                                                      )
+
    # Make an example of true and predicted y values to test the binary cross entropy backpropagation
     y = np.array([1, 0, 1, 0])
     y_hat = np.array([0.9, 0.1, 0.8, 0.2])
    
    # Calculate the binary cross entropy backpropagation
-    bce_backprop = nn_eg_model._binary_cross_entropy_backprop(y = y, y_hat = y_hat)
+    bce_backprop = nn_bce_eg_model._binary_cross_entropy_backprop(y = y, y_hat = y_hat)
 
     # True binary cross entropy values, calculated by hand
     true_bce_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
@@ -107,6 +121,7 @@ def test_binary_cross_entropy_backprop():
 
     # Check that the binary cross entropy backpropagation match the expected values calculated by hand
     assert np.allclose(bce_backprop, true_bce_backprop, rtol = 1e-4), "Mean squared error backpropagation was incorrect, the backpropagation values do not match expected values"
+
 
 
 def test_mean_squared_error():
@@ -120,15 +135,7 @@ def test_mean_squared_error():
     mean squared error = 0.025
 
     """
-   # initialize the neural network model so that we can use the mean_squared_error function
-    nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
-                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
-                                                        lr = 0.5, 
-                                                        seed = 42, 
-                                                        batch_size = 5, 
-                                                        epochs = 1, 
-                                                        loss_function='mse'
-                                                        )
+
    # Make an sample example of true and predicted y values to test the mean_squared_error function
     y_true = np.array([1, 0, 1, 0])
     y_pred = np.array([0.9, 0.1, 0.8, 0.2])
@@ -137,10 +144,13 @@ def test_mean_squared_error():
     sklearn_loss = mean_squared_error(y_true, y_pred)
 
     # Calculate the mean squared error using nn module _mean_squared_error function
-    nn_loss = nn_eg_model._mean_squared_error(y_true, y_pred)
+    nn_loss = nn_mse_eg_model._mean_squared_error(y_true, y_pred)
     
     # Compare mean squared error loss to sklean's calculation
     assert np.isclose(nn_loss, sklearn_loss), "Mean squared error loss calculation was incorrect, does not match sklearn's mean_squared_error function"
+
+
+
 
 def test_mean_squared_error_backprop():
     """
@@ -154,23 +164,12 @@ def test_mean_squared_error_backprop():
     true_mse_backprop = np.array([-0.05,  0.05, -0.10,  0.10])
 
     """
-
-
-   # Initialize the neural network model - to use the mean_squared_error_backprop function
-    nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
-                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
-                                                        lr = 0.5, 
-                                                        seed = 42, 
-                                                        batch_size = 5, 
-                                                        epochs = 1, 
-                                                        loss_function='mse'
-                                                        )
    # Make an example of true and predicted y values to test the mean_squared_error backpropagation
     y = np.array([1, 0, 1, 0])
     y_hat = np.array([0.9, 0.1, 0.8, 0.2])
 
     # Calculate the mean squared error backpropagation
-    mse_backprop = nn_eg_model._mean_squared_error_backprop(y = y, y_hat = y_hat)
+    mse_backprop = nn_mse_eg_model._mean_squared_error_backprop(y = y, y_hat = y_hat)
 
     # True mean squared error backpropagation values, calculated by hand
     true_mse_backprop = np.array([-0.05,  0.05, -0.10,  0.10])
@@ -180,6 +179,7 @@ def test_mean_squared_error_backprop():
    
     # Check that the mean squared error backpropagation match the expected values calculated by hand
     assert np.allclose(mse_backprop, true_mse_backprop, rtol = 1e-4), "Mean squared error backpropagation was incorrect, the backpropagation values do not match expected values"
+
 
 
 
@@ -203,6 +203,8 @@ def test_sample_seqs():
     assert len(sampled_seqs) == 6, "Sampling of sequences is incorrect, resampling by sample_seqs produced the wrong number of sequences"
     assert sum(sampled_labels) == 3, "Sampling of labels is incorrect, resampling by sample_seqs produced the wrong number of positive labels"
     assert sampled_labels.count(True) == sampled_labels.count(False), "Sampling of labels is incorrect, resampling by sample_seqs produced an imbalanced number of positive and negative labels"
+
+
 
 
 def test_one_hot_encode_seqs():
