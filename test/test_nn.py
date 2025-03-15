@@ -53,10 +53,9 @@ def test_single_forward():
     b_curr = np.array([[-4],[-1]]) # size (m,1) where m is the number of neurons in the current layer
 
     # Expected output
-    true_A_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]])
-
-    true_relu_Z_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]])
-    true_sigmoid_Z_curr = np.array([[ 0.81757448,  0.37754067, 0.62245933], [ 0.88079708, 0.81757448, 0.81757448]])
+    true_Z_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]])
+    true_relu_A_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]])
+    true_sigmoid_A_curr = np.array([[ 0.81757448,  0.37754067, 0.62245933], [ 0.88079708, 0.81757448, 0.81757448]])
 
     # Check that the single forward pass fails correctly when an invalid activation function is used
     try:
@@ -66,14 +65,15 @@ def test_single_forward():
         pass
 
     # Check that the single forward pass is correct when using the relu activation function
-    A_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='relu')
+    A_relu_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='relu')
 
-    assert np.allclose(A_curr, true_A_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated activation values do not match the expected values"
-    assert np.allclose(Z_curr, true_relu_Z_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated Z values with relu activation do not match the expected values"
+
+    assert np.allclose(Z_curr, true_Z_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated linear transformed activation values do not match the expected values"
+    assert np.allclose(A_relu_curr, true_relu_A_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated Z values with relu activation do not match the expected values"
 
    # Check that the single forward pass is correct when using the sigmoid activation function
-    A_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='sigmoid')
-    assert np.allclose(Z_curr, true_sigmoid_Z_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated Z values with sigmoid activation do not match the expected values"
+    A_sigmoid_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='sigmoid')
+    assert np.allclose(A_sigmoid_curr, true_sigmoid_A_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated Z values with sigmoid activation do not match the expected values"
 
 
 def test_forward():
