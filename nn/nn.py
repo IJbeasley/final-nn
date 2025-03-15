@@ -111,18 +111,16 @@ class NeuralNetwork:
         # W_curr shape = (m,n) where m is the number of neurons in the current layer and n is the number of neurons in the prior layer
         # A_prev shape = (n, batch_size) where n is the number of neurons in the prior layer and batch_size is the number of samples
         # b_curr shape = (m, 1) where m is the number of neurons in the current layer
-        print(W_curr.shape, A_prev.shape, b_curr.shape)
 
-
-        #if W_curr.shape[1] != A_prev.shape[0]: 
-        #    raise ValueError("Matrix dimensions do not match: W_curr = A_prev")
-        
-       # if W_curr.shape[0] != b_curr.shape[0]:
-       #     raise ValueError("Matrix dimensions do not match: W_curr = b_curr")
+        if W_curr.shape[1] != A_prev.shape[1]: 
+            raise ValueError(f"Matrix dimensions do not match: W_curr.shape={W_curr.shape}, A_prev.shape={A_prev.shape}")
+    
+        if W_curr.shape[0] != b_curr.shape[0]:
+            raise ValueError(f"Matrix dimensions do not match: W_curr.shape={W_curr.shape}, b_curr.shape={b_curr.shape}")
 
         # Linear transformed matrix = weight times input + bias
         #Z_curr = np.dot(W_curr, A_prev) + b_curr
-        Z_curr=np.dot(A_prev, W_curr.T) + b_curr.T
+        Z_curr = np.dot(A_prev, W_curr.T) + b_curr.T
         
         # then apply transformation with activation function: 
         if activation.lower() == "sigmoid":
@@ -233,9 +231,9 @@ class NeuralNetwork:
         # previous layer activation matrix
         dA_prev = np.dot(dZ, W_curr)
         # current layer weight matrix: from fomula slide 29/43 in neural networks lecture
-        dW_curr = np.dot(dZ.T, A_prev)
+        dW_curr = np.dot(dZ.T, A_prev) / dZ.shape[0]  # ? Normalize by batch size
         # current layer bias matrix: from formula slide 29/43 in neural networks lecture
-        db_curr=np.sum(dZ, axis=0).reshape(b_curr.shape)
+        db_curr= np.sum(dZ, axis=0, keepdims=True).T  #np.sum(dZ, axis=0).reshape(b_curr.shape)
         
         return (dA_prev, dW_curr, db_curr)
         
@@ -273,13 +271,12 @@ class NeuralNetwork:
             layer = self.arch[idx]
             layer_idx = idx + 1 
 
-            # Get additional required parameter values for _single_backprop step
             activation_curr = layer['activation']
             W_curr = self._param_dict['W' + str(layer_idx)]
             b_curr = self._param_dict['b' + str(layer_idx)]
             
             Z_curr = cache['Z' + str(layer_idx)]
-            A_prev = cache['A' + str(layer_idx - 1)]
+            A_prev = cache['A' + str(layer_idx -1)]
             
             # Perform single backprop step            
             dA_prev, dW_curr, db_curr = self._single_backprop(W_curr,
@@ -293,6 +290,9 @@ class NeuralNetwork:
             # Update grad_dict                                                   
             grad_dict['W' + str(layer_idx)] =  dW_curr
             grad_dict['b' + str(layer_idx)] =  db_curr
+
+            # Update dA_curr for next layer
+            dA_curr = dA_prev
             
         return grad_dict
 
@@ -305,6 +305,7 @@ class NeuralNetwork:
             grad_dict: Dict[str, ArrayLike]
                 Dictionary containing the gradient information from most recent round of backprop.
         """
+
         
         # for each node parameters across every layer ... 
         for idx, layer in enumerate(self.arch):
@@ -345,51 +346,64 @@ class NeuralNetwork:
             per_epoch_loss_val: List[float]
                 List of per epoch loss for validation set.
         """
-        # initialise variables
-        per_epoch_loss_train = []
-        per_epoch_loss_val = []
+        # Validate shapes - X should be (samples, features), y should be (samples,)
+        if len(X_train.shape) != 2:
+           raise ValueError(f"X_train should be 2D array, got shape {X_train.shape}")
+        
+        if len(X_val.shape) != 2:
+           raise ValueError(f"X_val should be 2D array, got shape {X_val.shape}")
+        
+        # Ensure y has correct shape (samples, output_dim)
+        if y_train.shape[0] != X_train.shape[0]:
+           raise ValueError(f"X_train and y_train should have the same number of samples, got shapes {X_train.shape} and {y_train.shape}")
+        
+        if y_train.shape[1] != self.arch[-1]['output_dim']:
+            raise ValueError(f"Output dimension of y_train should match output dimension of last layer in neural network architecture, got {y_train.shape[1]} and {self.arch[-1]['output_dim']}")
         
         # check requested error function is valid
         if self._loss_func.lower() != "mse" and  self._loss_func.lower() != "bce":
            raise ValueError("Loss function should be one of: mse, bce")
         
+        # initialise variables
+        per_epoch_loss_train = []
+        per_epoch_loss_val = []
+
+
         for epoch in range(self._epochs):
           
             # Shuffling the training data for each epoch of training
             shuffled_idx = np.random.permutation(X_train.shape[0])
-            X_train = X_train[shuffled_idx]
-            y_train = y_train[shuffled_idx]
-
-            #shuffle_arr = np.concatenate([X_train, np.expand_dims(y_train, 1)], axis=1)
-            #np.random.shuffle(shuffle_arr)
-            #X_train = shuffle_arr[:, :-1]
-            #y_train = shuffle_arr[:, -1].flatten()
+            X_train_shuffled = X_train[shuffled_idx]
+            y_train_shuffled = y_train[shuffled_idx]
                   
             # Create batches (also taken from HW7-regression/regression/logreg.py)
-            num_batches = int(X_train.shape[0] / self._batch_size) + 1
-            X_batch = np.array_split(X_train, num_batches)
-            y_batch = np.array_split(y_train, num_batches)
+            num_batches =  int(np.ceil(X_train_shuffled.shape[0] / self._batch_size))
+            X_batch = np.array_split(X_train_shuffled, num_batches)
+            y_batch = np.array_split(y_train_shuffled, num_batches)
             
             per_batch_loss = []
 
             # Iterate through batches (one of these loops is one epoch of training)
-            for X_train, y_train in zip(X_batch, y_batch):            
-            
+            for X, y in zip(X_batch, y_batch): 
+
                    # steps taken from slide 27/43 of neural networks lecture
+                   # Ensure y is properly shaped for the network
+                   if len(y.shape) == 1:
+                        y = y.reshape(-1, 1)
                    
                    # step 1: forward pass
-                   y_pred, cache = self.forward(X_train)
+                   y_pred, cache = self.forward(X)
                    
                    # step 2. measure error
                    if self._loss_func.lower() == "mse":
-                      error = self._mean_squared_error(y_train, y_pred)
+                      error = self._mean_squared_error(y, y_pred)
                    elif self._loss_func.lower() == "bce":
-                       error = self._binary_cross_entropy(y_train, y_pred)
+                       error = self._binary_cross_entropy(y, y_pred)
                    
                    per_batch_loss.append(error)
                    
                    # step 3. backward pass
-                   grad_dict = self.backprop(y_train, y_pred, cache)
+                   grad_dict = self.backprop(y, y_pred, cache)
                   
                    # step 4. do standard gradient descent 
                    self._update_params(grad_dict)
@@ -502,6 +516,10 @@ class NeuralNetwork:
             dZ: ArrayLike
                 Partial derivative of current layer Z matrix.
         """
+        # Make sure dA and Z have the same shape
+        if dA.shape != Z.shape:
+            raise ValueError(f"Shape mismatch in _relu_backprop: dA shape {dA.shape}, Z shape {Z.shape}")
+    
         # reLu gradient is either 0, or 1
         # if Z>0:
         #    # reLu gradient is 1, so dZ = 1 * dA
