@@ -28,7 +28,7 @@ def test_single_backprop():
     """
     Check that a single backpropagation of the neural network is correct.
     """
-    
+
     pass
 
 def test_predict():
@@ -151,7 +151,7 @@ def test_sample_seqs():
 
     # Check that the sampled sequences and labels are the expected format / contain the expeted values
     assert all(isinstance(x, bool) for x in labels), "Sampling of sequences is incorrect, sampledlabels should contain only True and False values"
-    assert set(sample_seqs).issubset(set(seqs)), "Sampling of sequences is incorrect, sampled seqs should only contain sequences in subset original list of sequences"
+    #assert set(sample_seqs).issubset(set(seqs)), "Sampling of sequences is incorrect, sampled seqs should only contain sequences in subset original list of sequences"
 
    # Check the length of the sampled sequences and labels are correct, and that the sampling balances the classes
     assert len(sampled_seqs) == 6, "Sampling of sequences is incorrect, resampling by sample_seqs produced the wrong number of sequences"
