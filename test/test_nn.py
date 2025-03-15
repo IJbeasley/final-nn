@@ -11,8 +11,8 @@ from sklearn.metrics import log_loss # bce
 from sklearn.metrics import mean_squared_error # mse
 
 # Initialize a neural network model to use across tests (with loss function set to binary cross entropy)
-nn_bce_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
-                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
+nn_bce_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 4, 'output_dim': 2, 'activation': 'relu'},
+                                                                          {'input_dim': 2, 'output_dim': 1, 'activation': 'relu'}],
                                                     lr = 0.5, 
                                                     seed = 42, 
                                                     batch_size = 5, 
@@ -21,14 +21,22 @@ nn_bce_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 
                                                     )
 
 # Initialize a neural network model to use across tests (with loss function set to mean squared error entropy)
-nn_mse_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
-                                                                          {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
+nn_mse_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 4, 'output_dim': 2, 'activation': 'relu'},
+                                                                          {'input_dim': 2, 'output_dim': 1, 'activation': 'relu'}],
                                                         lr = 0.5, 
                                                         seed = 42, 
                                                         batch_size = 5, 
                                                         epochs = 1, 
                                                         loss_function='mse'
-                                                        )
+                                                           )
+
+# Create own weights and biases for the neural network
+nn_bce_eg_model._param_dict = {"W1": np.array([[0.5, 1, 5], [5, 0.5, 1]]),
+                                                      "b1": np.array([[1], [1]]),
+                                                      "W2": np.array([[2, 1]]),
+                                                      "b2": np.array([[1]])
+                                                     }
+
 
 def test_single_forward():
     """
@@ -41,6 +49,8 @@ def test_forward():
     """
     Check that a forward pass of the neural network is correct.
     """
+    # Calculate forward
+    output, cache = nn_bce_eg_model.forward(np.array([2, 2, 2]))
 
     pass
 
@@ -61,6 +71,9 @@ def test_predict():
     """
     Ensure that the calculated prediction of the neural network is correct.
     """
+    
+    pred = nn_bce_eg_model.predict(np.array([2, 2, 2,]))
+
     pass
 
 
