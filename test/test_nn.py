@@ -126,8 +126,8 @@ def test_single_backprop():
     W_curr = np.array([[2, 1, 0.5, 1], [1,0.5, 0.5, 1]]) 
     A_prev = np.array([[1, 3, 1, 0], [1,0, 1, 1], [1,2, 1,0]]) 
     b_curr = np.array([[-4],[-1]]) 
-    dA_curr = np.array([[1, 2, 1], [1, 1, 1]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
-    Z_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
+    dA_curr = np.array([[1, 2, 1], [1, 1, 1]]).T # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
+    Z_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]]).T # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
     #A_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
 
     try:
