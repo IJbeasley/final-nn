@@ -91,7 +91,9 @@ def test_single_forward():
 
 def test_forward():
     """
-    Check that a forward pass of the neural network is correct.
+    Check that a forward pass of the neural network is correct: 
+    - Check number of prediction correct
+    - Check 
     """
     # Calculate forward
     test_examples = np.array([[2, 1, 1, 2], [2,1,1,2]])
@@ -177,21 +179,21 @@ def test_single_backprop():
 def test_predict():
     """
     Ensure that the calculated prediction of the neural network is correct: 
-    - (?TO DO): check won't predict if the model has not been trained
+    - (?TO DO LATER MAYBE): check won't predict if the model has not been trained
     - check that the prediction is the correct length
     - check that the prediction is the correct value
+    - check that predictions are the same for the same example
     - check that the prediction matches the output of the forward pass
     """
-    
-    pred = nn_bce_eg_model.predict(np.array([2, 1, 1, 2]))
+    test_examples = np.array([[2, 1, 1, 2], [2,1,1,2]])
+    pred = nn_bce_eg_model.predict(test_examples)
 
-    assert len(pred) == 1, "Prediction was incorrect, output dimension should have been a single value"
+    assert len(pred) == 2, "Predictions was performed incorrectly, number of predictions didn't match the number of provided examples"
+    assert np.allclose(pred[0], pred[1], rtol = 1e-4), "Prediction was performed incorrectly, different predictions were given for the same example"
+    assert np.allclose(pred, 27.5, rtol = 1e-4), "Prediction was performed incorrectly, the predicted value does not match the expected value"
 
-    print(pred)
-
-    assert np.allclose(pred, 0.9990889488055994, rtol = 1e-4), "Prediction was incorrect, the predicted value does not match the expected value"
-
-    assert np.allclose(pred, nn_bce_eg_model.forward(np.array([2, 1, 1, 2]))[0], rtol = 1e-4), "Prediction was incorrect, the predicted value does not match the forward pass output"
+    output, cache = nn_bce_eg_model.forward(test_examples)
+    assert np.allclose(pred, output, rtol = 1e-4), "Prediction was incorrect, the predicted value does not match the forward pass output"
 
 
 
