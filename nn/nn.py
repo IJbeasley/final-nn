@@ -345,12 +345,8 @@ class NeuralNetwork:
         per_epoch_loss_train = []
         per_epoch_loss_val = []
         
-        # define error function
-        if self._loss_func.lower() == "mse":
-           error_fn = self._mean_squared_error()
-        elif self._loss_func.lower() == "bce":
-           error_fn = self._binary_cross_entropy()
-        else:
+        # check requested error function is valid
+        if self._loss_func.lower() != "mse" and  self._loss_func.lower() != "bce":
            raise ValueError("Loss function should be one of: mse, bce")
         
         for epoch in range(self._epochs):
@@ -378,7 +374,11 @@ class NeuralNetwork:
                    y_pred, cache = self.forward(X_train)
                    
                    # step 2. measure error
-                   error = error_fn(y_train, y_pred)
+                   if self._loss_func.lower() == "mse":
+                      error = self._mean_squared_error(y_train, y_pred)
+                   elif self._loss_func.lower() == "bce":
+                       error = self._binary_cross_entropy(y_train, y_pred)
+                   
                    per_batch_loss.append(error)
                    
                    # step 3. backward pass
