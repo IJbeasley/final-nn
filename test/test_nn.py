@@ -61,9 +61,13 @@ def test_binary_cross_entropy():
     bce = nn_eg_model._binary_cross_entropy(y_true, y_pred)
 
     assert np.isclose(bce, 0.164252033486018), "Binary cross entropy loss calculation was incorrect"
+    assert np.isclose(bce, sklearn_loss), "Binary cross entropy loss calculation was incorrect"
     
 
 def test_binary_cross_entropy_backprop():
+    """
+    Ensure that the binary_cross_entropy_backprop function correctly calculates the binary cross entropy backpropagation. 
+    """
     pass
 
 def test_mean_squared_error():
@@ -106,15 +110,24 @@ def test_mean_squared_error_backprop():
 
 def test_sample_seqs():
     """
-    Ensure that the sample_seqs function correctly samples sequences
-    """
+    Ensure that the sample_seqs function correctly samples sequences, and labels to account for class imbalance.
+    Checks that the sampled sequences and labels are the expected length, and that the sampling balances the classes.
 
+    """
+    # Create a list of sequences and labels to test the sample_seqs function
     seqs = ['AGA', 'TGC', 'CTA', 'GAT']
     labels = [True, True, True, False]
 
     sampled_seqs, sampled_labels = sample_seqs(seqs, labels)
 
-    assert len(sampled_seqs) == 6, "Sampled sequences are incorrect"
+    # Check that the sampled sequences and labels are the expected format / contain the expeted values
+    assert all(isinstance(x, bool) for x in labels), "Sampling of sequences is incorrect, sampledlabels should contain only True and False values"
+    assert set(sample_seqs).issubset(set(seqs)), "Sampling of sequences is incorrect, sampled seqs should only contain sequences in subset original list of sequences"
+
+   # Check the length of the sampled sequences and labels are correct, and that the sampling balances the classes
+    assert len(sampled_seqs) == 6, "Sampling of sequences is incorrect, resampling by sample_seqs produced the wrong number of sequences"
+    assert sum(sampled_labels) == 3, "Sampling of labels is incorrect, resampling by sample_seqs produced the wrong number of positive labels"
+    assert sampled_labels.count(True) == sampled_labels.count(False), "Sampling of labels is incorrect, resampling by sample_seqs produced an imbalanced number of positive and negative labels"
 
 
 def test_one_hot_encode_seqs():
@@ -131,4 +144,4 @@ def test_one_hot_encode_seqs():
 
     print(encoded_seqs)
 
-    assert np.array_equal(encoded_seqs, [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]), "One-hot encoding is incorrect"
+    assert np.array_equal(encoded_seqs[0], [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]), "One-hot encoding is incorrect"
