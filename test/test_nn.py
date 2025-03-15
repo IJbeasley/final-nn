@@ -26,9 +26,11 @@ nn_mse_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 4, 'output_dim': 2, 'a
                                                         lr = 0.5, 
                                                         seed = 42, 
                                                         batch_size = 5, 
-                                                        epochs = 1, 
+                                                        epochs = 5, 
                                                         loss_function='mse'
                                                            )
+
+nn_mse_eg_model.fit()
 
 # Create own weights and biases for the neural network
 nn_bce_eg_model._param_dict = {"W1": np.array([[0.5, 1, 5, 1],
