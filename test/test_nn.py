@@ -80,6 +80,7 @@ def test_binary_cross_entropy_backprop():
     y = np.array([1, 0, 1, 0])
     y_hat = np.array([0.9, 0.1, 0.8, 0.2])
 
+    true_bce_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
 
     """
    # initialize the neural network model so that we can use the binary_cross_entropy function
@@ -96,7 +97,7 @@ def test_binary_cross_entropy_backprop():
     y_hat = np.array([0.9, 0.1, 0.8, 0.2])
    
    # Calculate the binary cross entropy backpropagation
-    bce_backprop = nn_eg_model._binary_cross_entropy_backprop(y = y, yhat = y_hat)
+    bce_backprop = nn_eg_model._binary_cross_entropy_backprop(y = y, y_hat = y_hat)
 
     # True binary cross entropy values, calculated by hand
     true_bce_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
@@ -139,7 +140,7 @@ def test_mean_squared_error():
     nn_loss = nn_eg_model._mean_squared_error(y_true, y_pred)
     
     # Compare mean squared error loss to sklean's calculation
-    assert np.isclose(nn_loss, sklearn_loss), "Mean squared error loss calculation was incorrect"
+    assert np.isclose(nn_loss, sklearn_loss), "Mean squared error loss calculation was incorrect, does not match sklearn's mean_squared_error function"
 
 def test_mean_squared_error_backprop():
     """
@@ -150,7 +151,8 @@ def test_mean_squared_error_backprop():
     y = np.array([1, 0, 1, 0])
     y_hat = np.array([0.9, 0.1, 0.8, 0.2])
 
-    true_mse_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
+    true_mse_backprop = np.array([-0.05,  0.05, -0.10,  0.10])
+
     """
 
 
@@ -168,7 +170,7 @@ def test_mean_squared_error_backprop():
     y_hat = np.array([0.9, 0.1, 0.8, 0.2])
 
     # Calculate the mean squared error backpropagation
-    mse_backprop = nn_eg_model._mean_squared_error_backprop(y = y, yhat = y_hat)
+    mse_backprop = nn_eg_model._mean_squared_error_backprop(y = y, y_hat = y_hat)
 
     # True mean squared error backpropagation values, calculated by hand
     true_mse_backprop = np.array([-0.05,  0.05, -0.10,  0.10])
