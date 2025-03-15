@@ -8,6 +8,7 @@ from nn.preprocess import one_hot_encode_seqs,  sample_seqs
 
 # Use scikit-learn to check the correctness of our loss functions (bce, mse)
 from sklearn.metrics import log_loss # bce
+from sklearn.metrics import mean_squared_error # mse
 
 def test_single_forward():
     pass
@@ -38,16 +39,17 @@ def test_binary_cross_entropy():
     binary cross entropy = 0.164252
 
     """
-
+    # initialize the neural network model so that we can use the binary_cross_entropy function
     nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
                                                                           {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
-                            lr = 0.5, 
-                            seed = 42, 
-                            batch_size = 5, 
-                            epochs = 1, 
-                            loss_function='bce'
-                                                    )
+                                                        lr = 0.5, 
+                                                       seed = 42, 
+                                                       batch_size = 5, 
+                                                       epochs = 1, 
+                                                      loss_function='bce'
+                                                      )
     
+    # Make an sample example of true and predicted y values to test the binary_cross_entropy function
     y_true = np.array([1, 0, 1, 0])
     y_pred = np.array([0.9, 0.1, 0.8, 0.2])
 
@@ -88,12 +90,12 @@ def test_mean_squared_error():
     y_true = np.array([1, 0, 1, 0])
     y_pred = np.array([0.9, 0.1, 0.8, 0.2])
    # Calculate loss using scikit learn's log_loss function
-    sklearn_loss =mean_squared_error(y_true, y_pred)
+    sklearn_loss = mean_squared_error(y_true, y_pred)
 
     # calculate the mean squared error, compare to the value calculated by hand
     mse = nn_eg_model._mean_squared_error(y_true, y_pred)
 
-    assert np.isclose(mse, 0.025), "Mean squared error loss calculation was incorrect"
+    assert np.isclose(mse, sklearn_loss), "Mean squared error loss calculation was incorrect"
 
 def test_mean_squared_error_backprop():
     """
