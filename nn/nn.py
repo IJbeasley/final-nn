@@ -111,6 +111,9 @@ class NeuralNetwork:
         # W_curr shape = (m,n) where m is the number of neurons in the current layer and n is the number of neurons in the prior layer
         # A_prev shape = (n, batch_size) where n is the number of neurons in the prior layer and batch_size is the number of samples
         # b_curr shape = (m, 1) where m is the number of neurons in the current layer
+        print(W_curr.shape, A_prev.shape, b_curr.shape)
+
+
         if W_curr.shape[1] != A_prev.shape[0]: 
             raise ValueError("Matrix dimensions do not match: W_curr = A_prev")
         
