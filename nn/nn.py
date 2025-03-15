@@ -106,6 +106,17 @@ class NeuralNetwork:
             Z_curr: ArrayLike
                 Current layer linear transformed matrix.
         """
+
+        # Check input matrix dimensions
+        # W_curr shape = (m,n) where m is the number of neurons in the current layer and n is the number of neurons in the prior layer
+        # A_prev shape = (n, batch_size) where n is the number of neurons in the prior layer and batch_size is the number of samples
+        # b_curr shape = (m, 1) where m is the number of neurons in the current layer
+        if W_curr.shape[1] != A_prev.shape[0]: 
+            raise ValueError("Matrix dimensions do not match: W_curr = A_prev")
+        
+        if W_curr.shape[0] != b_curr.shape[0]:
+            raise ValueError("Matrix dimensions do not match: W_curr = b_curr")
+
         # Linear transformed matrix = weight times input + bias
         Z_curr = np.dot(W_curr, A_prev) + b_curr
         
