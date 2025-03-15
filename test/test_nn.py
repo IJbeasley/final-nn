@@ -40,10 +40,41 @@ nn_bce_eg_model._param_dict = {"W1": np.array([[0.5, 1, 5], [5, 0.5, 1]]),
 
 def test_single_forward():
     """
-    Check that a single forward pass of the neural network is correct.
+    Check that a single forward pass of the neural network is correct:
+    - check fails correctly when invalid activation function is used.
+    - compare the calculated activation values and Z values to the expected values, when using the relu activation function
+    - compare the calculated activation values and Z values to the expected values, when using the sigmoid activation function
+
     """
 
-    pass
+    # Create example to test the single forward pass of the neural network
+    W_curr = np.array([[2, 1, 0.5, 1], [1,0.5, 0.5, 1]]) #(m,n) where m is the number of neurons in the current layer and n is the number of neurons in the prior layer
+    A_prev = np.array([[1, 3, 1, 0], [1,0, 1, 1], [1,2, 1,0]]).T # size (n,p) where n is the number of features (neurons in prior layer) and p is the number of examples
+    b_curr = np.array([[-4],[-1]]) # size (m,1) where m is the number of neurons in the current layer
+
+    # Expected output
+    true_A_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]])
+
+    true_relu_Z_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]])
+    true_sigmoid_Z_curr = np.array([[ 0.81757448,  0.37754067, 0.62245933], [ 0.88079708, 0.81757448, 0.81757448]])
+
+    # Check that the single forward pass fails correctly when an invalid activation function is used
+    try:
+        A_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='invalid')
+        assert False, "Single forward pass did not fail correctly, an invalid activation function was used"
+    except ValueError:
+        pass
+
+    # Check that the single forward pass is correct when using the relu activation function
+    A_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='relu')
+
+    assert np.allclose(A_curr, true_A_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated activation values do not match the expected values"
+    assert np.allclose(Z_curr, true_relu_Z_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated Z values with relu activation do not match the expected values"
+
+   # Check that the single forward pass is correct when using the sigmoid activation function
+    A_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='sigmoid')
+    assert np.allclose(Z_curr, true_sigmoid_Z_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated Z values with sigmoid activation do not match the expected values"
+
 
 def test_forward():
     """
