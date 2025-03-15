@@ -299,8 +299,8 @@ class NeuralNetwork:
             # update using gradient descent, i.e.
             # using formula on slide 12/43 neural network lecture
             # update by subtracting learning rate * gradient
-            self.param_dict['W' + str(layer_idx)] -= self.lr * grad_dict['W' + str(layer_idx)]
-            self.param_dict['b' + str(layer_idx)] -= self.lr * grad_dict['b' + str(layer_idx)]
+            self._param_dict['W' + str(layer_idx)] -= self.lr * grad_dict['W' + str(layer_idx)]
+            self._param_dict['b' + str(layer_idx)] -= self.lr * grad_dict['b' + str(layer_idx)]
         
 
     def fit(
@@ -336,9 +336,9 @@ class NeuralNetwork:
         
         # define error function
         if self._loss_func.lower() == "mse":
-           error_fn = self.mean_squared_error()
+           error_fn = self._mean_squared_error()
         elif self._loss_func.lower() == "bce":
-           error_fn = self.binary_cross_entropy()
+           error_fn = self._binary_cross_entropy()
         else:
            raise ValueError("Loss function should be one of: mse, bce")
         
