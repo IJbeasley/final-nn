@@ -85,6 +85,22 @@ def test_forward():
     output, cache = nn_bce_eg_model.forward(np.array([2, 1, 1, 2]))
 
 
+    print(cache)
+
+    print(output)
+
+    # Check that the forward pass output is the correct length
+    assert len(output) == 1, "Forward pass was incorrect, output dimension should have been a single value"
+
+    # Check that the forward pass output is the correct value
+    assert np.allclose(output, 0.9990889488055994, rtol = 1e-4), "Forward pass was incorrect, the output value does not match the expected value"
+
+    # Check that the forward pass output matches the cache
+    assert np.allclose(output, cache['A_curr'], rtol = 1e-4), "Forward pass was incorrect, the output value does not match the cache value"
+
+
+
+
 
     pass
 
@@ -97,6 +113,57 @@ def test_single_backprop():
     - check fails correctly when invalid activation function is used.
     - compare the calculated dA_prev, dW_curr, and db_curr values to the expected values, when using the relu activation function
     """
+
+    # Create example to test the single backpropagation of the neural network
+    W_curr = np.array([[2, 1, 0.5, 1], [1,0.5, 0.5, 1]]) #(m,n) where m is the number of neurons in the current layer and n is the number of neurons in the prior layer
+    A_prev = np.array([[1, 3, 1, 0], [1,0, 1, 1], [1,2, 1,0]]).T # size (n,p) where n is the number of features (neurons in prior layer) and p is the number of examples
+    b_curr = np.array([[-4],[-1]]) # size (m,1) where m is the number of neurons in the current layer
+    dA_curr = np.array([[1, 2, 1], [1, 1, 1]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
+    Z_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
+    A_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
+
+    try:
+        dA_prev, dW_curr, db_curr=nn_bce_eg_model._single_backprop(W_curr, b_curr, Z_curr, A_prev, dA_curr, 'invalid')
+        assert False, "Single backpropagation did not fail correctly, an invalid activation function was used"
+    except ValueError:
+        pass
+   
+    # Now calculate and check the single backpropagation with the relu activation function
+    dA_prev, dW_curr, db_curr = nn_bce_eg_model._single_backprop(W_curr, b_curr, Z_curr, A_prev, dA_curr, 'relu')
+
+    # Check that the single backpropagation output is the correct length
+    assert len(dA_prev) == len(A_prev), "Single backpropagation was incorrect, the length of the dA_prev should be the same as the length of the A_prev"
+    assert len(dW_curr) == len(W_curr), "Single backpropagation was incorrect, the length of the dW_curr should be the same as the length of the W_curr"
+    assert len(db_curr) == len(b_curr), "Single backpropagation was incorrect, the length of the db_curr should be the same as the length of the b_curr"
+
+    # set expected output - calculated by hand
+    # to check the correctness of the backpropagation 
+    true_dA_prev = np.array([[
+        0.5, 0.5, 0.5, 0.5],
+        [ 1.5, 1.5, 1.5, 1.5],
+        [ 0.5, 0.5, 0.5, 0.5]
+    ]).T
+
+    true_dW_curr = np.array([
+        [ 1.5, 1.5, 1.5, 1.5],
+        [ 1.5, 1.5, 1.5, 1.5]
+    ])
+
+    true_db_curr = np.array([
+        [ 3],  
+        [ 3]
+    ])
+
+
+    # Check that the single backpropagation output matches the expected values
+    print(dA_prev)
+    print(dW_curr)
+    print(db_curr)
+
+    assert np.allclose(dA_prev, true_dA_prev, rtol = 1e-4), "Single backpropagation was incorrect, the calculated dA_prev values do not match the expected values"
+    assert np.allclose(dW_curr, true_dW_curr, rtol = 1e-4), "Single backpropagation was incorrect, the calculated dW_curr values do not match the expected values"  
+    assert np.allclose(db_curr, true_db_curr, rtol = 1e-4), "Single backpropagation was incorrect, the calculated db_curr values do not match the expected values"
+
 
     pass
 
