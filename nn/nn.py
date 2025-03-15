@@ -233,7 +233,7 @@ class NeuralNetwork:
         # previous layer activation matrix
         dA_prev = np.dot(dZ, W_curr)
         # current layer weight matrix: from fomula slide 29/43 in neural networks lecture
-        dW_curr = np.dot(dZ, A_prev)
+        dW_curr = np.dot(dZ.T, A_prev)
         # current layer bias matrix: from formula slide 29/43 in neural networks lecture
         db_curr=np.sum(dZ, axis=0).reshape(b_curr.shape)
         
@@ -261,9 +261,9 @@ class NeuralNetwork:
         
         # Calculate dA_curr - as required argument for _single_backprop 
         if self._loss_func.lower() == "mse":
-           dA_curr = self.mean_squared_error_backprop(y, y_hat)
+           dA_curr = self._mean_squared_error_backprop(y, y_hat)
         elif self._loss_func.lower() == "bce":
-           dA_curr = self.binary_cross_entropy_backprop(y, y_hat)
+           dA_curr = self._binary_cross_entropy_backprop(y, y_hat)
         else:
            raise ValueError("Loss function should be one of: mse, bce")
         
@@ -356,11 +356,14 @@ class NeuralNetwork:
         for epoch in range(self._epochs):
           
             # Shuffling the training data for each epoch of training
-            # Shuffling code taken from HW7-regression/regression/logreg.py
-            shuffle_arr = np.concatenate([X_train, np.expand_dims(y_train, 1)], axis=1)
-            np.random.shuffle(shuffle_arr)
-            X_train = shuffle_arr[:, :-1]
-            y_train = shuffle_arr[:, -1].flatten()
+            shuffled_idx = np.random.permutation(X_train.shape[0])
+            X_train = X_train[shuffled_idx]
+            y_train = y_train[shuffled_idx]
+
+            #shuffle_arr = np.concatenate([X_train, np.expand_dims(y_train, 1)], axis=1)
+            #np.random.shuffle(shuffle_arr)
+            #X_train = shuffle_arr[:, :-1]
+            #y_train = shuffle_arr[:, -1].flatten()
                   
             # Create batches (also taken from HW7-regression/regression/logreg.py)
             num_batches = int(X_train.shape[0] / self._batch_size) + 1
