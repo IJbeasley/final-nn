@@ -21,13 +21,13 @@ nn_bce_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 4, 'output_dim': 2, 'a
                                                     )
 
 # Fake data to train model on
-#X_train = np.array([[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7], [5, 6, 7, 8]])
-#y_train = np.array([1, 0, 1, 0, 1])
+X_train = np.array([[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7], [5, 6, 7, 8]])
+y_train = np.array([1, 0, 1, 0, 1])
 
-#X_val = np.array([[2, 3, 4, 5], [3, 4, 5, 6]])
-#y_val = np.array([0, 1])
+X_val = np.array([[2, 3, 4, 5], [3, 4, 5, 6]])
+y_val = np.array([0, 1])
 
-#nn_bce_eg_model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val)
+nn_bce_eg_model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val)
 
 # set own weights and biases for the neural network for testing
 nn_bce_eg_model._param_dict = {"W1": np.array([[0.5, 1, 5, 1],
@@ -61,13 +61,13 @@ def test_single_forward():
 
     # Create example to test the single forward pass of the neural network
     W_curr = np.array([[2, 1, 0.5, 1], [1,0.5, 0.5, 1]]) #(m,n) where m is the number of neurons in the current layer and n is the number of neurons in the prior layer
-    A_prev = np.array([[1, 3, 1, 0], [1,0, 1, 1], [1,2, 1,0]]).T # size (n,p) where n is the number of features (neurons in prior layer) and p is the number of examples
+    A_prev = np.array([[1, 3, 1, 0], [1,0, 1, 1], [1,2, 1,0]]) 
     b_curr = np.array([[-4],[-1]]) # size (m,1) where m is the number of neurons in the current layer
 
     # Expected output
-    true_Z_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]])
-    true_relu_A_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]])
-    true_sigmoid_A_curr = np.array([[ 0.81757448,  0.37754067, 0.62245933], [ 0.88079708, 0.81757448, 0.81757448]])
+    true_Z_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]]).T
+    true_relu_A_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]]).T
+    true_sigmoid_A_curr = np.array([[ 0.81757448,  0.37754067, 0.62245933], [ 0.88079708, 0.81757448, 0.81757448]]).T
 
     # Check that the single forward pass fails correctly when an invalid activation function is used
     try:
@@ -77,14 +77,15 @@ def test_single_forward():
         pass
 
     # Check that the single forward pass is correct when using the relu activation function
-    A_relu_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='relu')
+    A_relu_curr, Z_relu_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='relu')
 
 
-    assert np.allclose(Z_curr, true_Z_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated linear transformed activation values do not match the expected values"
+    assert np.allclose(Z_relu_curr, true_Z_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated linear transformed activation values do not match the expected values"
     assert np.allclose(A_relu_curr, true_relu_A_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated Z values with relu activation do not match the expected values"
 
    # Check that the single forward pass is correct when using the sigmoid activation function
-    A_sigmoid_curr, Z_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='sigmoid')
+    A_sigmoid_curr, Z_sigmoid_curr = nn_bce_eg_model._single_forward(W_curr, b_curr, A_prev, activation='sigmoid')
+    assert np.allclose(Z_sigmoid_curr, Z_relu_curr), "single forward pass was incorrected, calculated Z values with sigmoid activation do not match expected values"
     assert np.allclose(A_sigmoid_curr, true_sigmoid_A_curr, rtol = 1e-4), "Single forward pass was incorrect, the calculated Z values with sigmoid activation do not match the expected values"
 
 
@@ -93,27 +94,21 @@ def test_forward():
     Check that a forward pass of the neural network is correct.
     """
     # Calculate forward
-    output, cache = nn_bce_eg_model.forward(np.array([2, 1, 1, 2]))
+    test_examples = np.array([[2, 1, 1, 2], [2,1,1,2]])
+    output, cache = nn_bce_eg_model.forward(test_examples)
 
-
-    print(cache)
-
-    print(output)
-
-    # Check that the forward pass output is the correct length
-    #assert len(output) == 1, "Forward pass was incorrect, output dimension should have been a single value"
-
+    # Check number of predictions made is correct (matches number of test examples)
+    assert len(output) == test_examples.shape[0], "Forward pass was incorrect, number of predictions is correct"
+    # Check that the forward pass output for a single prediction is the correct length
+    assert len(output[0]) == 1, "Forward pass was incorrect, output prediction should have been a single value"
     # Check that the forward pass output is the correct value
-    #assert np.allclose(output, 0.9990889488055994, rtol = 1e-4), "Forward pass was incorrect, the output value does not match the expected value"
+    assert np.allclose(output, [[27.5], [27.5]], rtol = 1e-4), "Forward pass was incorrect, the output value does not match the expected value"
 
     # Check that the forward pass output matches the cache
-    #assert np.allclose(output, cache['A_curr'], rtol = 1e-4), "Forward pass was incorrect, the output value does not match the cache value"
+    assert np.allclose(output, cache['A2'], rtol = 1e-4), "Forward pass was incorrect, the output value does not match the cache value"
+    # Check that examples were stored to cache properly
+    assert np.allclose(cache['A0'], test_examples), "Forward pass was incorrect, the test examples were not cached properly"
 
-
-
-
-
-    pass
 
 
 
@@ -250,9 +245,8 @@ def test_binary_cross_entropy_backprop():
     bce_backprop = nn_bce_eg_model._binary_cross_entropy_backprop(y = y, y_hat = y_hat)
 
     # True binary cross entropy values, calculated by hand
-    true_bce_backprop = np.array([-0.2778, -0.2778, -0.3125, -0.3125])
+    true_bce_backprop = np.array([-0.2778, 0.2778, -0.3125, 0.3125])
 
-    print(bce_backprop)
     # Check that binary cross entropy backpropagation output is the correct length
     assert len(bce_backprop) == len(y), "Mean squared error backpropagation was incorrectly performed, the length of the backpropagation should be the same as the length of the true values"
 
