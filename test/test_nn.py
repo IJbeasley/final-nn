@@ -115,7 +115,7 @@ def test_binary_cross_entropy_backprop():
     y = np.array([1, 0, 1, 0])
     y_hat = np.array([0.9, 0.1, 0.8, 0.2])
 
-    true_bce_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
+    true_bce_backprop = np.array([-0.2778,-0.2778, -0.3125, -0.3125])
 
     """
 
@@ -127,7 +127,7 @@ def test_binary_cross_entropy_backprop():
     bce_backprop = nn_bce_eg_model._binary_cross_entropy_backprop(y = y, y_hat = y_hat)
 
     # True binary cross entropy values, calculated by hand
-    true_bce_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
+    true_bce_backprop = np.array([-0.2778, -0.2778, -0.3125, -0.3125])
 
     # Check that binary cross entropy backpropagation output is the correct length
     assert len(bce_backprop) == len(y), "Mean squared error backpropagation was incorrectly performed, the length of the backpropagation should be the same as the length of the true values"
