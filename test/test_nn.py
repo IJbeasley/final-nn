@@ -23,11 +23,21 @@ def test_single_backprop():
 
 def test_predict():
     """
-    Check the that the calculated prediction of the neural network is correct.
+    Ensure that the calculated prediction of the neural network is correct.
     """
     pass
 
 def test_binary_cross_entropy():
+    """
+    Ensure that the binary_cross_entropy function correctly calculates the binary cross entropy loss
+    by comparing to the value calculated by sklearn's log_loss function.
+
+    The example tested:
+    y_true = np.array([1, 0, 1, 0])
+    y_pred = np.array([0.9, 0.1, 0.8, 0.2])
+    binary cross entropy = 0.164252
+
+    """
 
     nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
                                                                           {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
@@ -56,8 +66,10 @@ def test_binary_cross_entropy_backprop():
 
 def test_mean_squared_error():
     """
-    Ensure that the mean_squared_error function correctly calculates the mean squared error using: 
+    Ensure that the mean_squared_error function correctly calculates the mean squared error loss 
+    by comparing to the value calculated by sklearn's mean_squared_error function.
 
+    The example tested:
     y_true = np.array([1, 0, 1, 0])
     y_pred = np.array([0.9, 0.1, 0.8, 0.2])
     mean squared error = 0.025
@@ -72,9 +84,11 @@ def test_mean_squared_error():
                                                         epochs = 1, 
                                                         loss_function='mse'
                                                         )
-   # make an sample example of true and predicted y values to test the mean_squared_error function
+   # Make an sample example of true and predicted y values to test the mean_squared_error function
     y_true = np.array([1, 0, 1, 0])
     y_pred = np.array([0.9, 0.1, 0.8, 0.2])
+   # Calculate loss using scikit learn's log_loss function
+    sklearn_loss =mean_squared_error(y_true, y_pred)
 
     # calculate the mean squared error, compare to the value calculated by hand
     mse = nn_eg_model._mean_squared_error(y_true, y_pred)
