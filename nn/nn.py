@@ -357,13 +357,21 @@ class NeuralNetwork:
         if y_train.shape[0] != X_train.shape[0]:
            raise ValueError(f"X_train and y_train should have the same number of samples, got shapes {X_train.shape} and {y_train.shape}")
         
-        if y_train.shape[1] != self.arch[-1]['output_dim']:
-            raise ValueError(f"Output dimension of y_train should match output dimension of last layer in neural network architecture, got {y_train.shape[1]} and {self.arch[-1]['output_dim']}")
+        try:
+            if y_train.shape[1] != self.arch[-1]['output_dim']:
+                raise ValueError(f"Output dimension of y_train should match output dimension of last layer in neural network architecture, got {y_train.shape[1]} and {self.arch[-1]['output_dim']}")
+        except:
+            if self.arch[-1]['output_dim'] == 1 and len(y_train.shape) != 1:
+                raise ValueError(f"Output dimension of y_train should match output dimension of last layer in neural network architecture, got {len(y_train.shape)} and {self.arch[-1]['output_dim']}")
         
         # check requested error function is valid
         if self._loss_func.lower() != "mse" and  self._loss_func.lower() != "bce":
            raise ValueError("Loss function should be one of: mse, bce")
         
+        # Deal with boolean y values
+        y_train = np.asarray(y_train, dtype=np.float64)
+        y_val = np.asarray(y_val, dtype=np.float64)
+
         # initialise variables
         per_epoch_loss_train = []
         per_epoch_loss_val = []
@@ -578,10 +586,11 @@ class NeuralNetwork:
         # Handle potential numerical stability issues
         # By adding small epsilon to prevent log(0)
         epsilon = 1e-15
-        y_hat = np.clip(y_hat, epsilon, 1 - epsilon)
+        #y_hat = np.clip(y_hat, epsilon, 1 - epsilon)
         
         # Take derivative of losses: - y * (np.log(y_hat) + (1 - y) * np.log(1 - y_hat))
-        dA_unscaled = - (y *  1 /(y_hat) + (1- y) * 1 / (1 - y_hat))
+        dA_unscaled =  (-y) /(y_hat + epsilon) + (1- y)  / (1 - y_hat + epsilon)
+
         # scale dervivative by batch size
         dA = dA_unscaled / len(y)
         
