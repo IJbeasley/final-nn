@@ -21,13 +21,13 @@ nn_bce_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 4, 'output_dim': 2, 'a
                                                     )
 
 # Fake data to train model on
-X_train = np.array([[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7], [5, 6, 7, 8]])
-y_train = np.array([1, 0, 1, 0, 1])
+#X_train = np.array([[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7], [5, 6, 7, 8]])
+#y_train = np.array([1, 0, 1, 0, 1])
 
-X_val = np.array([[2, 3, 4, 5], [3, 4, 5, 6]])
-y_val = np.array([0, 1])
+#X_val = np.array([[2, 3, 4, 5], [3, 4, 5, 6]])
+#y_val = np.array([0, 1])
 
-nn_bce_eg_model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val)
+#nn_bce_eg_model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val)
 
 # set own weights and biases for the neural network for testing
 nn_bce_eg_model._param_dict = {"W1": np.array([[0.5, 1, 5, 1],
