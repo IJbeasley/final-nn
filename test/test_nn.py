@@ -113,10 +113,18 @@ def test_mean_squared_error():
 
 def test_mean_squared_error_backprop():
     """
-    Ensure that the mean_squared_error_backprop function correctly calculates the mean squared error backpropagation
+    Ensure that the mean_squared_error_backprop function correctly calculates the mean squared error backpropagation 
+    by comparing its output to the value calculated by hand.
+
+    The example tested:
+    y = np.array([1, 0, 1, 0])
+    y_hat = np.array([0.9, 0.1, 0.8, 0.2])
+
+    true_mse_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
     """
 
-   # initialize the neural network model 
+
+   # Initialize the neural network model - to use the mean_squared_error_backprop function
     nn_eg_model  = NeuralNetwork(nn_arch = [{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
                                                                           {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'}],
                                                         lr = 0.5, 
@@ -126,14 +134,20 @@ def test_mean_squared_error_backprop():
                                                         loss_function='mse'
                                                         )
    # Make an sample example of true and predicted y values to test the mean_squared_error backpropagation
-    y_true = np.array([1, 0, 1, 0])
-    y_pred = np.array([0.9, 0.1, 0.8, 0.2])
+    y = np.array([1, 0, 1, 0])
+    y_hat = np.array([0.9, 0.1, 0.8, 0.2])
 
     # Calculate the mean squared error backpropagation
-    mse_backprop = nn_eg_model._mean_squared_error_backprop(y_true, y_pred)
+    mse_backprop = nn_eg_model._mean_squared_error_backprop(y = y_true, yhat = y_pred)
 
+    # True mean squared error backpropagation values, calculated by hand
+    true_mse_backprop = np.array([0.2778, 0.2778, 0.3125, 0.3125])
+   
+    # Check that the mean squared error backpropagationoutput  is the correct length
+    assert len(mse_backprop) == len(y_true), "Mean squared error backpropagation was incorrectly performed, the length of the backpropagation should be the same as the length of the true values"
+   
     # Check that the mean squared error backpropagation is correct
-    assert np.allclose(mse_backprop, np.array([-0.1, 0.1, -0.2, 0.2])), "Mean squared error backpropagation was incorrect"
+    assert np.allclose(mse_backprop, true_mse_backprop, rtol = 1e-4), "Mean squared error backpropagation was incorrect, the backpropagation values do not match expected values"
 
 
 
