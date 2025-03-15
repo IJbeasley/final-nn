@@ -60,9 +60,9 @@ def test_single_forward():
     """
 
     # Create example to test the single forward pass of the neural network
-    W_curr = np.array([[2, 1, 0.5, 1], [1,0.5, 0.5, 1]]) #(m,n) where m is the number of neurons in the current layer and n is the number of neurons in the prior layer
+    W_curr = np.array([[2, 1, 0.5, 1], [1,0.5, 0.5, 1]]) 
     A_prev = np.array([[1, 3, 1, 0], [1,0, 1, 1], [1,2, 1,0]]) 
-    b_curr = np.array([[-4],[-1]]) # size (m,1) where m is the number of neurons in the current layer
+    b_curr = np.array([[-4],[-1]]) 
 
     # Expected output
     true_Z_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]]).T
@@ -123,12 +123,12 @@ def test_single_backprop():
     """
 
     # Create example to test the single backpropagation of the neural network
-    W_curr = np.array([[2, 1, 0.5, 1], [1,0.5, 0.5, 1]]) #(m,n) where m is the number of neurons in the current layer and n is the number of neurons in the prior layer
-    A_prev = np.array([[1, 3, 1, 0], [1,0, 1, 1], [1,2, 1,0]]).T # size (n,p) where n is the number of features (neurons in prior layer) and p is the number of examples
-    b_curr = np.array([[-4],[-1]]) # size (m,1) where m is the number of neurons in the current layer
+    W_curr = np.array([[2, 1, 0.5, 1], [1,0.5, 0.5, 1]]) 
+    A_prev = np.array([[1, 3, 1, 0], [1,0, 1, 1], [1,2, 1,0]]) 
+    b_curr = np.array([[-4],[-1]]) 
     dA_curr = np.array([[1, 2, 1], [1, 1, 1]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
     Z_curr = np.array([[ 1.5, -0.5, 0.5], [ 2, 1.5, 1.5]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
-    A_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
+    #A_curr = np.array([[ 1.5, 0, 0.5], [ 2, 1.5, 1.5]]) # size (m,p) where m is the number of neurons in the current layer and p is the number of examples
 
     try:
         dA_prev, dW_curr, db_curr=nn_bce_eg_model._single_backprop(W_curr, b_curr, Z_curr, A_prev, dA_curr, 'invalid')
